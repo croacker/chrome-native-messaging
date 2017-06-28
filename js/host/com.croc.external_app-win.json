@@ -1,0 +1,9 @@
+{
+  "name": "com.croc.external_app",
+  "description": "My Application",
+  "path": "messaging.bat",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://bmfbcejdknlknpncfpeloejonjoledha/"
+  ]
+}
