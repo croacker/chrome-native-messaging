@@ -17,9 +17,16 @@ public class SwingTestApplet implements IMethod{
     private void showFrame(){
         JFrame frame = new JFrame("FrameDemo");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JLabel lbl = new JLabel("CAPTION11111111111111111111111111111111111111111111111111111111111111111111111\n" +
-                "sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
-        frame.getContentPane().add(lbl, BorderLayout.CENTER);
+        JLabel lbl0 = new JLabel("CAPTION000");
+        JLabel lbl1 = new JLabel("CAPTION111");
+        JLabel lbl2 = new JLabel("CAPTION222");
+        JLabel lbl3 = new JLabel("CAPTION333");
+        JLabel lbl4 = new JLabel("CAPTION444");
+        frame.getContentPane().add(lbl0, BorderLayout.NORTH);
+        frame.getContentPane().add(lbl1, BorderLayout.WEST);
+        frame.getContentPane().add(lbl2, BorderLayout.CENTER);
+        frame.getContentPane().add(lbl3, BorderLayout.EAST);
+        frame.getContentPane().add(lbl4, BorderLayout.SOUTH);
         frame.pack();
         frame.setVisible(true);
     }

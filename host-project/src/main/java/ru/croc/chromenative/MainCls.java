@@ -35,23 +35,11 @@ public class MainCls {
         boolean stop = false;
         for(;;) {
             String requestJson = CommunicateService.getInstance().readMessage(System.in);
+            //Для тестирования. В последствие удалить
 //            String requestJson = "{\"method\":\"swingTestApplet\",\"data\":\"java\"}";
-
             ObjectMapper mapper = new ObjectMapper();
             NativeRequest request = mapper.readValue(requestJson, NativeRequest.class);
-
             new Thread(new Job(request)).start();
-
-//            NativeResponse response = new NativeResponse();
-//            response.setStatus("OK");
-//            response.setData("Hello, " + request.getMethod() + "!");
-//
-//            StringWriter stringEmp = new StringWriter();
-//            mapper.writeValue(stringEmp, response);
-//            String responseJson = stringEmp.toString();
-//            CommunicateService.getInstance().sendMessage(responseJson);
-//            CommunicateService.getInstance().sendMessage(requestJson);
-
             if(stop){
                 break;
             }
