@@ -1,0 +1,27 @@
+#crcWorkTime{
+    background-color:white;
+    position:absolute;
+    margin:-7px 0 0 169px;
+    padding: 0 3px 3px 3px;
+    z-index:9999;
+    border-radius:3px;
+    box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.48);
+}
+
+.crc-work-select-container{
+    height: 100%;
+    margin: 0 5px;
+    float: left;
+    display: inline-block;
+}
+
+.crc-work-select{
+    width:100%;
+    border: 1px solid #ccc;
+    border-radius:3px;
+    cursor:pointer;
+}
+
+div.crc-work-select-container label{
+    font-size:9pt;
+}

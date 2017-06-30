@@ -3,10 +3,9 @@ package com.croc.documentum.print;
 /**
  *
  */
-public class SystemInfoApplet implements IMethod {
+public class SystemInfoApplet  implements IMethod {
 
     public void init() {
-
     }
 
     public String getJavaVersion() {

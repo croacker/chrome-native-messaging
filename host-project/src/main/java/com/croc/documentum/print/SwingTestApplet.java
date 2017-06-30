@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Created by agumenyuk on 28.06.2017.
+ *
  */
 public class SwingTestApplet implements IMethod{
 
@@ -15,20 +15,43 @@ public class SwingTestApplet implements IMethod{
     }
 
     private void showFrame(){
-        JFrame frame = new JFrame("FrameDemo");
+        JFrame frame = new JFrame("Native messaging JFrame");
+        frame.setSize(300, 150);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JLabel lbl0 = new JLabel("CAPTION000");
-        JLabel lbl1 = new JLabel("CAPTION111");
-        JLabel lbl2 = new JLabel("CAPTION222");
-        JLabel lbl3 = new JLabel("CAPTION333");
-        JLabel lbl4 = new JLabel("CAPTION444");
-        frame.getContentPane().add(lbl0, BorderLayout.NORTH);
-        frame.getContentPane().add(lbl1, BorderLayout.WEST);
-        frame.getContentPane().add(lbl2, BorderLayout.CENTER);
-        frame.getContentPane().add(lbl3, BorderLayout.EAST);
-        frame.getContentPane().add(lbl4, BorderLayout.SOUTH);
-        frame.pack();
+
+        JPanel panel = new JPanel();
+        frame.add(panel);
+        placeComponents(panel);
+
         frame.setVisible(true);
     }
 
+    private void placeComponents(JPanel panel) {
+
+        panel.setLayout(null);
+
+        JLabel userLabel = new JLabel("Пользователь");
+        userLabel.setBounds(10, 10, 80, 25);
+        panel.add(userLabel);
+
+        JTextField userText = new JTextField(20);
+        userText.setBounds(100, 10, 160, 25);
+        panel.add(userText);
+
+        JLabel passwordLabel = new JLabel("Пароль");
+        passwordLabel.setBounds(10, 40, 80, 25);
+        panel.add(passwordLabel);
+
+        JPasswordField passwordText = new JPasswordField(20);
+        passwordText.setBounds(100, 40, 160, 25);
+        panel.add(passwordText);
+
+        JButton loginButton = new JButton("Войти");
+        loginButton.setBounds(10, 80, 80, 25);
+        panel.add(loginButton);
+
+        JButton registerButton = new JButton("Зарегистрироваться");
+        registerButton.setBounds(180, 80, 80, 25);
+        panel.add(registerButton);
+    }
 }

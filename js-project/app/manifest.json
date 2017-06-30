@@ -1,15 +1,10 @@
 {
   "manifest_version": 2,
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvyGmcOkw4cTnhO0bgl3fQLAdv1jZp8T1ZHYI+4d8FgwwVKLYWE+pAuJ/0LrI69ibed4Nnnw5YleB1xCpI+mzB56xfXWboKp6lljevKqWJ5TpJk/Vam3kSSoZwpmJRXnzmcM3qKpL6viUhTfwGmQO6WVTsN4YCx+KWXv97IyF6yDTgd6hwFsvCZY2n1ADgurrQkE6AcJ3kK4xZ14jaHllXEdFcqwh0+Am5qLcIJ1cNo5iFD35exXsjwdQbmpt8sEk5f95pK5FEEbJFmOTguu2fOZycqIoTgoDrbbhT5k9TUogZaN5Lup0Iwh0Cv60i4C1f7IdPrxHuaYmYCfoUezXnQIDAQAB",
-  "name": "Chrome Native Messaging",
+  "name": "Chrome CROC Native Messaging",
   "version": "1.0",
   "description": "Send a message to a native application",
-  "app": {
-    "background": {
-      "scripts": [ "background.js" ]
-    }
-  },
-    "background": {
+  "background": {
     "scripts": [
       "background.js"
     ],
@@ -17,12 +12,12 @@
   },
   "browser_action": {
     "default_title": "CROC Native connection plugin",
-    "default_icon": "icon24.png",
-    "icons": {
-      "16": "icon16.png",
-      "48": "icon48.png",
-      "128": "icon128.png"
-    }
+    "default_icon": "icons/icon48.png"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   },
   "permissions": [
     "https://*/*",
