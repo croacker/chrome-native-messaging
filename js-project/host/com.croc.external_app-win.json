@@ -1,9 +1,10 @@
 {
   "name": "com.croc.external_app",
   "description": "My Application",
-  "path": "messaging.bat",
+  "path": "d:/projects/java/chrome-native-messaging/js-project/host/messaging.bat",
   "type": "stdio",
   "allowed_origins": [
+  	"chrome-extension://cojmnimkhcalbbhkjifdlimeepcpnfhn/",
     "chrome-extension://bmfbcejdknlknpncfpeloejonjoledha/"
   ]
 }
