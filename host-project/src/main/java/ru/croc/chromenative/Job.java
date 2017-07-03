@@ -27,7 +27,7 @@ public class Job implements Runnable {
 
         NativeResponse response = new NativeResponse();
         response.setStatus("OK");
-        response.setData(reqResult + Thread.currentThread().hashCode());
+        response.setData(reqResult);
 
         StringWriter stringEmp = new StringWriter();
         try {

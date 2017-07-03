@@ -22,7 +22,7 @@
   "permissions": [
     "https://*/*",
     "http://*/*",
-    "file://*/*",
+    "http://127.0.0.1:8082/*",
     "tabs",
     "nativeMessaging"
   ]
