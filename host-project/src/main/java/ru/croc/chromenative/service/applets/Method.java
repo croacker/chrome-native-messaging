@@ -1,5 +1,6 @@
 package ru.croc.chromenative.service.applets;
 
+import com.croc.documentum.print.PrintAttachmentListApplet;
 import com.croc.documentum.print.SwingTestApplet;
 import com.croc.documentum.print.SystemInfoApplet;
 
@@ -8,7 +9,8 @@ import com.croc.documentum.print.SystemInfoApplet;
  */
 public enum Method {
     SYSTEM_INFO_APPLET("systemInfo" ,SystemInfoApplet.class),
-    SWING_TEST_APPLET("swingTestApplet" ,SwingTestApplet.class);
+    SWING_TEST_APPLET("swingTestApplet" ,SwingTestApplet.class),
+    PRINT_ATTACHMENT_LIST_APPLET("printAttachmentListApplet" ,PrintAttachmentListApplet.class);
 
     private Class appletClass;
     private String key;
