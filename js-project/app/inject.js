@@ -1,8 +1,26 @@
 var sourceName = 'inject.js';
 var extId = 'bmfbcejdknlknpncfpeloejonjoledha';
+
+/**
+ * Имена элементов управления отладочной формы test-ui/index.html (не СЭД)
+ */
 var BTN_SYSTEM_INFO = 'systeminfo-button';
 var BTN_SHOW_FRAME = 'showframe-button';
 var UL_NAME = 'response';
+
+/**
+ * Имена элементов управления СЭД
+ */
+var TN_BTN_SYSTEM_INFO = 'SystemInfoButtonComponent_systemInfo_0';
+var TN_BTN_PRINT_PRINT_ALL = 'button_PrintAttachmentContainer_btnPrintAll_0';
+var TN_BTN_PRINT_PRINT_SELECTED = 'button_PrintAttachmentContainer_btnPrint_0';
+
+/**
+ * Ссылки на элементы управления СЭД
+ */
+var tnButtonSystemInfo;
+var tnButtonPrintAll;
+var tnButtonPrintSelected;
 
 var ulResponse;
 
@@ -10,16 +28,21 @@ var ulResponse;
  * Инициализация.
  */
 (function () {
-    var btnSystemInfoTn = document.body.getElementsByTagName('frame')[3]
-        .contentDocument.getElementsByName('SystemInfoButtonComponent_systemInfo_0')[0];
-    if (btnSystemInfoTn && !btnSystemInfoTn.dataset.isInitialized) {
-        btnSystemInfoTn.addEventListener('click', sendMessageToBackgroundJs);
-        btnSystemInfoTn.dataset.isInitialized = true;
-        btnSystemInfoTn.dataset.requestData = JSON.stringify({ method: "systemInfo", data: "java" });
-        btnSystemInfoTn.dataset.responseCallbackName = 'updateJavaVersion';
+    var tnButtonSystemInfo = document.body.getElementsByTagName('frame')[3]
+        .contentDocument.getElementsByName(TN_BTN_SYSTEM_INFO)[0];
+    if (tnButtonSystemInfo && !tnButtonSystemInfo.dataset.isInitialized) {
+        tnButtonSystemInfo.addEventListener('click', sendMessageToBackgroundJs);
+        tnButtonSystemInfo.dataset.isInitialized = true;
+        tnButtonSystemInfo.dataset.requestData = JSON.stringify({ method: "systemInfo", data: "java" });
+        tnButtonSystemInfo.dataset.responseCallbackName = 'updateJavaVersion';
     }
 
+    /**
+     * Объект для хранения информации о сеансе
+     */
     window.transoilBrowserExtension = {
+        version: '0.0.1',
+
         /**
          * Обновить значение версия JRE
          */
@@ -35,9 +58,9 @@ var ulResponse;
         /**
          * Вызвать метод указанный в ответе от native-приложения
          */
-        callSetFunction: function(response){
+        callSetFunction: function (response) {
             var method = 'set' + response.method;
-            if(window.transoilBrowserExtension[method]){
+            if (window.transoilBrowserExtension[method]) {
                 window.transoilBrowserExtension[method](response);
             }
         },
@@ -45,17 +68,17 @@ var ulResponse;
         /**
          * Обработать ответ от native-приложения
          */
-        dispatchNativeResponse: function(response){
-            if(response.method){
+        dispatchNativeResponse: function (response) {
+            if (response.method) {
                 window.transoilBrowserExtension.callSetFunction(response);
-            }else{
+            } else {
                 console.log('Unnable to process response, method not defined.');
                 console.log(response);
-            }            
+            }
         }
     };
 
-    window.transoilBrowserExtension.version = '0.0.1';
+    setTimeout(findPrintAttachmentListAppletButtons, 5000);
 })();
 
 /**
@@ -75,7 +98,7 @@ function sendMessageToBackgroundJs() {
 function sendMessageIncludeId(request, responseCallbackName) {
     console.log('Call: sendMessageIncludeId');
     chrome.runtime.sendMessage(extId, request, function (response) {
-        console.log(response);        
+        console.log(response);
     });
 }
 
@@ -97,7 +120,8 @@ chrome.runtime.onMessage.addListener(
     });
 
 /**
- * Отладочная функция, для добавления ответов в список с id == UL_NAME
+ * Отладочная функция, для добавления ответов в список <ul> с id == UL_NAME
+ * 
  * @param {*} msg 
  */
 function addToList(msg) {
@@ -109,6 +133,28 @@ function addToList(msg) {
     ulResponse.appendChild(liElement);
 }
 
+/**
+ * Найти кнопки PrintAttachmentListApplet и добавить необходимую функциональность.
+ */
+function findPrintAttachmentListAppletButtons() {
+    var windowContent = new WindowContent(window.top);
+    var childFrame = windowContent.getMainactionChildChildFrame();
+
+    if (childFrame) {
+        var contentDocument = childFrame.contentDocument;
+        tnButtonPrintAll = contentDocument.getElementById(TN_BTN_PRINT_PRINT_ALL);
+        if (tnButtonPrintAll) {
+            console.log(tnButtonPrintAll);
+        }
+
+        tnButtonPrintSelected = contentDocument.getElementById(TN_BTN_PRINT_PRINT_SELECTED);
+        if (tnButtonPrintSelected) {
+            console.log(tnButtonPrintSelected);
+        }
+    }
+    setTimeout(findPrintAttachmentListAppletButtons, 5000);
+}
+
 ///НЕ ИСПОЛЬЗУЕТСЯ
 function createScriptInPage() {
     var s = document.createElement('script');
@@ -118,9 +164,72 @@ function createScriptInPage() {
         'sendMessage:function(msg){' +
         'chrome.runtime.sendMessage("bmfbcejdknlknpncfpeloejonjoledha", {source:"inject.js",control:"systeminfo-button",content:{method:"systemInfo", data: "java"}}, function(response){console.log(response);});' +
         '}};';*/
-        s.textContent = 'var transoilBrowserExtension2 = {' +
+    s.textContent = 'var transoilBrowserExtension2 = {' +
         'sendMessage:function(msg){' +
         "return window.top.frames['view'].frames['workarea'].frames['content'].Ext;" +
         '}};';
     (document.head || document.documentElement).appendChild(s);
+}
+
+function WindowContent(topWindow) {
+    var me = this;
+    this.topWindow = topWindow;
+
+    this.getViewFrame = function () {
+        return this.topWindow.document.getElementsByTagName('frame')['view'];
+    }
+
+    this.getWorkareaFrame = function () {
+        var result;
+        var viewFrame = me.getViewFrame();
+        if (viewFrame) {
+            result = viewFrame.contentDocument.getElementsByTagName('frame')['workarea'];
+        }
+        return result;
+    }
+
+    this.getContentFrame = function () {
+        var result;
+        var workareaFrame = me.getWorkareaFrame();
+        if (workareaFrame) {
+            result = workareaFrame.contentDocument.getElementsByTagName('frame')['content'];
+        }
+        return result;
+    }
+
+    this.getMainactionFrame = function () {
+        var result;
+        var contentFrame = me.getContentFrame();
+        if (contentFrame) {
+            var childFrames = contentFrame.contentDocument.getElementsByTagName('frame');
+            if (childFrames.length != 0) {
+                var childOfChild = childFrames[0].contentDocument.getElementsByTagName('frame')
+                if (childOfChild.length != 0) {
+                    var mainactionDiv = childOfChild[0].contentDocument.getElementById('mainactionframe');
+                    if (mainactionDiv) {
+                        result = mainactionDiv.getElementsByTagName('iframe')[0];
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    this.getMainactionChildFrame = function () {
+        var result;
+        var mainactionFrame = me.getMainactionFrame();
+        if (mainactionFrame) {
+            result = mainactionFrame.contentDocument.getElementsByTagName('iframe')[0];
+        }
+        return result;
+    }
+
+    this.getMainactionChildChildFrame = function () {
+        var result;
+        var childFrame = me.getMainactionChildFrame();
+        if (childFrame) {
+            result = childFrame.contentDocument.getElementsByTagName('frame')[0];
+        }
+        return result;
+    }
 }
