@@ -10,7 +10,6 @@ var ulResponse;
  * Инициализация.
  */
 (function () {
-    createScriptInPage();
     var btnSystemInfoTn = document.body.getElementsByTagName('frame')[3]
         .contentDocument.getElementsByName('SystemInfoButtonComponent_systemInfo_0')[0];
     if (btnSystemInfoTn && !btnSystemInfoTn.dataset.isInitialized) {
@@ -19,19 +18,6 @@ var ulResponse;
         btnSystemInfoTn.dataset.requestData = JSON.stringify({ method: "systemInfo", data: "java" });
         btnSystemInfoTn.dataset.responseCallbackName = 'updateJavaVersion';
     }
-
-    setTimeout(function () {
-        /*console.log('Call setTimeout function ');
-        var Ext = window.top.frames['view'].frames['workarea'].frames['content'].Ext;
-        console.log(Ext);
-        if (Ext) {
-            Ext.getCmp('a_button_cmpFilter_btnRefresh_0').on('click', function () { alert('clicke!') });
-        }*/
-        var Ext = window.top.transoilBrowserExtension2.sendMessage();
-        if (Ext) {
-            Ext.getCmp('a_button_cmpFilter_btnRefresh_0').on('click', function () { alert('clicke!') });
-        }
-    }, 5000);
 
     window.transoilBrowserExtension = {
         /**
