@@ -2,11 +2,20 @@ package com.croc.documentum.print;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  *
  */
 public class SwingTestApplet implements IMethod{
+
+    private Map<String, String> arguments = Collections.EMPTY_MAP;
+
+    @Override
+    public void init(Map<String, String> arguments) {
+        this.arguments = arguments;
+    }
 
     @Override
     public String getResult() {

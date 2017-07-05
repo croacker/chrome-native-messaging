@@ -1,5 +1,8 @@
 package com.croc.documentum.print;
 
+import java.util.Collections;
+import java.util.Map;
+
 /**
  *Конверсия:
  * <APPLET
@@ -14,8 +17,17 @@ package com.croc.documentum.print;
  </APPLET>
  */
 public class PrintApplet implements IMethod{
+
+    private Map<String, String> arguments = Collections.EMPTY_MAP;
+
+    @Override
+    public void init(Map<String, String> arguments) {
+        this.arguments = arguments;
+    }
+
     @Override
     public String getResult() {
         return null;
     }
+
 }

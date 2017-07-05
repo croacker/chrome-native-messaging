@@ -144,16 +144,34 @@ function findPrintAttachmentListAppletButtons() {
         var contentDocument = childFrame.contentDocument;
         tnButtonPrintAll = contentDocument.getElementById(TN_BTN_PRINT_PRINT_ALL);
         if (tnButtonPrintAll) {
-            console.log(tnButtonPrintAll);
+            addListenerToPrintButton(tnButtonPrintAll);
         }
 
         tnButtonPrintSelected = contentDocument.getElementById(TN_BTN_PRINT_PRINT_SELECTED);
         if (tnButtonPrintSelected) {
-            console.log(tnButtonPrintSelected);
+            addListenerToPrintButton(tnButtonPrintSelected);
         }
     }
     setTimeout(findPrintAttachmentListAppletButtons, 5000);
 }
+
+function addListenerToPrintButton(btnPrintElement) {
+    if (!btnPrintElement.dataset.isInitialized) {
+        var childButtons = btnPrintElement.getElementsByTagName('button');
+        if (childButtons.length != 0) {
+            var childButton = childButtons[0];
+            childButton.addEventListener('click', function (event) {
+                console.log(childButton);
+                event.stopPropagation();
+            });
+
+            btnPrintElement.dataset.isInitialized = true;
+            btnPrintElement.dataset.requestData = JSON.stringify({ method: "printAttachmentListApplet", data: "java" });
+            btnPrintElement.dataset.responseCallbackName = 'closePrintWindow';
+        }
+    }
+}
+
 
 ///НЕ ИСПОЛЬЗУЕТСЯ
 function createScriptInPage() {

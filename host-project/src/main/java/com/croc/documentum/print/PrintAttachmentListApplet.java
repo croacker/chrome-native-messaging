@@ -1,6 +1,21 @@
 package com.croc.documentum.print;
 
-import netscape.javascript.JSObject;
+import java.awt.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.print.Doc;
 import javax.print.DocFlavor;
@@ -10,19 +25,6 @@ import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
-import java.awt.*;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  *Конверсия:
@@ -39,6 +41,13 @@ import java.util.zip.ZipInputStream;
  */
 public class PrintAttachmentListApplet implements IMethod{
 
+    private Map<String, String> arguments = Collections.EMPTY_MAP;
+
+    @Override
+    public void init(Map<String, String> arguments) {
+        this.arguments = arguments;
+    }
+
     @Override
     public String getResult() {
         return null;
@@ -50,15 +59,17 @@ public class PrintAttachmentListApplet implements IMethod{
 
     private String printUrl;
 
-    private JSObject window;
-
     public void start() {
         printUrl = getParameter("printurl");
-        window = JSObject.getWindow(this);
+//        window = JSObject.getWindow(this);
         final int appletWidth = 5;
         final int appletHeight = 5;
-        setSize(appletWidth, appletHeight);
+//        setSize(appletWidth, appletHeight);
         print(printUrl);
+    }
+
+    private String getParameter(String key) {
+        return arguments.get(key);
     }
 
     public void stop() {
@@ -234,7 +245,8 @@ public class PrintAttachmentListApplet implements IMethod{
     }
 
     protected void closeComponent() {
-        window.eval("printFinish();");
+        //window.eval("printFinish();");
+
     }
 
     protected boolean isPDF(final File file) {
@@ -245,5 +257,15 @@ public class PrintAttachmentListApplet implements IMethod{
             extension = fileName.substring(i + 1);
         }
         return extension.equalsIgnoreCase("pdf");
+    }
+
+    public URL getDocumentBase() {
+        URL url;
+        try {
+             url = new URL(getParameter("url"));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        return url;
     }
 }
