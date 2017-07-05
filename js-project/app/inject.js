@@ -137,6 +137,16 @@ function addToList(msg) {
  * Найти кнопки PrintAttachmentListApplet и добавить необходимую функциональность.
  */
 function findPrintAttachmentListAppletButtons() {
+    // First create the event
+    var myEvent = new CustomEvent("userLogin", {
+        detail: {
+            username: "davidwalsh"
+        }
+    });
+
+    // Trigger it!
+    window.top.dispatchEvent(myEvent);
+
     var windowContent = new WindowContent(window.top);
     var childFrame = windowContent.getMainactionChildChildFrame();
 
