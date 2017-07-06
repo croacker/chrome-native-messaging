@@ -22,18 +22,6 @@ var BTN_SYSTEM_INFO = 'systeminfo-button';
 var BTN_SHOW_FRAME = 'showframe-button';
 var UL_NAME = 'response';
 
-/**
- * Имена элементов управления СЭД
- */
-var TN_BTN_PRINT_PRINT_ALL = 'button_PrintAttachmentContainer_btnPrintAll_0';
-var TN_BTN_PRINT_PRINT_SELECTED = 'button_PrintAttachmentContainer_btnPrint_0';
-
-/**
- * Ссылки на элементы управления СЭД
- */
-var tnButtonPrintAll;
-var tnButtonPrintSelected;
-
 var ulResponse;
 
 /**
@@ -97,54 +85,31 @@ function subscribeToApplicationEvents(ksedEventBus) {
     }
 
     extensionEventBus.addEventListener('tnGetSystemInfo', eventProcessor.onTnGetSystemInfo);
+
+    extensionEventBus.addEventListener('onTnPrintSelected', eventProcessor.onTnPrintSelected);
+
+    extensionEventBus.addEventListener('onTnPrintAll', eventProcessor.onTnPrintAll);
 }
 
 /**
- * Декоратор для шины событий
- * @param {*} ksedEventBus 
- */
-function ExtensionEventBus(ksedEventBus) {
-    var me = this;
-    /**
-     * Объект КСЕД, выступающий в качестве шины событий
-     */
-    this.ksedEventBus = ksedEventBus;
-    /**
-     * Подписаться на событие с наименованием
-     */
-    this.addEventListener = function (eventName, callback) {
-        me.ksedEventBus.addEventListener(eventName, callback);
-    }
-    /**
-     * Возбудить событие
-     */
-    this.dispatchEvent = function (event) {
-        me.ksedEventBus.dispatchEvent(event);
-    }
-}
-
-/**
- * Слушатель события нажатия на кнопку получения системной информации.
+ * Отправка сообщения в background.js
+ * @param {*} request 
  */
 function sendMessageToBackgroundJs(request) {
-    // var request = { source: sourceName, control: this.id, content: JSON.parse(this.dataset.requestData) };
-    // var responseCallbackName = this.dataset.responseCallbackName;
     try {
         sendMessageIncludeId(request)
     } catch (err) {
         console.error(err);
-        sendMessageExcludeId(request);
     }
 }
 
+/**
+ * Отправка сообщения включая id расширения
+ * @param {*} request 
+ */
 function sendMessageIncludeId(request) {
     console.log('Call: sendMessageIncludeId');
     chrome.runtime.sendMessage(extId, request);
-}
-
-function sendMessageExcludeId(request) {
-    console.log('Call: sendMessageExcludeId');
-    chrome.runtime.sendMessage(request);
 }
 
 /**
@@ -170,22 +135,10 @@ function addToList(msg) {
     ulResponse.appendChild(liElement);
 }
 
-///НЕ ИСПОЛЬЗУЕТСЯ
-function createScriptInPage() {
-    var s = document.createElement('script');
-    // TODO: Впоследствие можно перенести внедрение объекта на страницу в отдельный файл и загружать не в виде текста
-    // а как chrome.extension.getURL('transoilBrowserExtension.js'); ВАЖНО - нужно будет добавить файл в manifest.json:web_accessible_resources 
-    /*s.textContent = 'var transoilBrowserExtension = {' +
-        'sendMessage:function(msg){' +
-        'chrome.runtime.sendMessage("bmfbcejdknlknpncfpeloejonjoledha", {source:"inject.js",control:"systeminfo-button",content:{method:"systemInfo", data: "java"}}, function(response){console.log(response);});' +
-        '}};';*/
-    s.textContent = 'var transoilBrowserExtension2 = {' +
-        'sendMessage:function(msg){' +
-        "return window.top.frames['view'].frames['workarea'].frames['content'].Ext;" +
-        '}};';
-    (document.head || document.documentElement).appendChild(s);
-}
-
+/**
+ * Поиск нужного фрейма(К УДАЛЕНИЮ)
+ * @param {*} topWindow 
+ */
 function WindowContent(topWindow) {
     var me = this;
     this.topWindow = topWindow;
@@ -249,19 +202,69 @@ function WindowContent(topWindow) {
     }
 }
 
+
+/**
+ * Декоратор для шины событий
+ * @param {*} ksedEventBus 
+ */
+function ExtensionEventBus(ksedEventBus) {
+    var me = this;
+    /**
+     * Объект КСЕД, выступающий в качестве шины событий
+     */
+    this.ksedEventBus = ksedEventBus;
+    /**
+     * Подписаться на событие с наименованием
+     */
+    this.addEventListener = function (eventName, callback) {
+        me.ksedEventBus.addEventListener(eventName, callback);
+    }
+    /**
+     * Возбудить событие
+     */
+    this.dispatchEvent = function (event) {
+        me.ksedEventBus.dispatchEvent(event);
+    }
+}
+
 /**
  * state-less обработчик событий
  */
 function EventProcessor(){
+    var me = this;
+
     /**
-     * Приложение выполнило запрос версии java
+     * Приложение выполнило запрос системной информации, в частности версии jre
      */
     this.onTnGetSystemInfo = function (event) {
-        var request = {
+        var request = me.getRequest(event.detail);
+        sendMessageToBackgroundJs(request);
+    };
+
+    /**
+     * Приложение выполнило запрос на печать выбранных файлов
+     */
+    this.onTnPrintSelected = function (event) {
+        var request = me.getRequest(event.detail);
+        sendMessageToBackgroundJs(request);
+    };
+
+    /**
+     * Приложение выполнило запрос на печать всех файлов
+     */
+    this.onTnPrintAll = function (event) {
+        var request = me.getRequest(event.detail);
+        sendMessageToBackgroundJs(request);
+    };
+
+    /**
+     * Создать объект запроса
+     */
+    this.getRequest = function(detail){
+        return {
             source: sourceName,
             control: '',
-            content: event.detail
-        }
-        sendMessageToBackgroundJs(request);
+            content: detail
+        };
     }
 }
