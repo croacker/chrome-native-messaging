@@ -9,7 +9,7 @@ import com.croc.documentum.print.SystemInfoApplet;
  * Created by agumenyuk on 28.06.2017.
  */
 public enum Method {
-    SYSTEM_INFO_APPLET("systemInfo" ,SystemInfoApplet.class),
+    SYSTEM_INFO_APPLET("getSystemInfo" ,SystemInfoApplet.class),
     SWING_TEST_APPLET("swingTestApplet" ,SwingTestApplet.class),
     PRINT_ATTACHMENT_LIST_APPLET("printAttachmentListApplet", PrintAttachmentListApplet.class),
     PRINT_APPLET("printApplet", PrintApplet.class);

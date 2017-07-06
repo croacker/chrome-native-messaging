@@ -2,6 +2,20 @@ var sourceName = 'inject.js';
 var extId = 'bmfbcejdknlknpncfpeloejonjoledha';
 
 /**
+ * Объект расширения
+ */
+var tnBrowserExtension;
+
+/**
+ * Шина событий для расширения
+ */
+var extensionEventBus;
+/**
+ * Обработчик событий
+ */
+var eventProcessor;
+
+/**
  * Имена элементов управления отладочной формы test-ui/index.html (не СЭД)
  */
 var BTN_SYSTEM_INFO = 'systeminfo-button';
@@ -11,14 +25,12 @@ var UL_NAME = 'response';
 /**
  * Имена элементов управления СЭД
  */
-var TN_BTN_SYSTEM_INFO = 'SystemInfoButtonComponent_systemInfo_0';
 var TN_BTN_PRINT_PRINT_ALL = 'button_PrintAttachmentContainer_btnPrintAll_0';
 var TN_BTN_PRINT_PRINT_SELECTED = 'button_PrintAttachmentContainer_btnPrint_0';
 
 /**
  * Ссылки на элементы управления СЭД
  */
-var tnButtonSystemInfo;
 var tnButtonPrintAll;
 var tnButtonPrintSelected;
 
@@ -28,40 +40,32 @@ var ulResponse;
  * Инициализация.
  */
 (function () {
-    var tnButtonSystemInfo = document.body.getElementsByTagName('frame')[3]
-        .contentDocument.getElementsByName(TN_BTN_SYSTEM_INFO)[0];
-    if (tnButtonSystemInfo && !tnButtonSystemInfo.dataset.isInitialized) {
-        tnButtonSystemInfo.addEventListener('click', sendMessageToBackgroundJs);
-        tnButtonSystemInfo.dataset.isInitialized = true;
-        tnButtonSystemInfo.dataset.requestData = JSON.stringify({ method: "systemInfo", data: "java" });
-        tnButtonSystemInfo.dataset.responseCallbackName = 'updateJavaVersion';
-    }
-
     /**
      * Объект для хранения информации о сеансе
      */
-    window.transoilBrowserExtension = {
+    transoilBrowserExtension = {
         version: '0.0.1',
-
         /**
          * Обновить значение версия JRE
          */
-        setsystemInfo: function (response) {
-            window.top.document.body.getElementsByTagName('frame')[4]
-                .contentDocument.getElementsByTagName('frame')[2]
-                .contentDocument.getElementsByTagName('frame')[2]
-                .contentDocument.getElementById('systemInfoJreVersion').innerHTML = response.data;
-            console.log('window.transoilBrowserExtension.setsystemInfo');
-            console.log(response);
+        getSystemInfoPocessResponse: function (response) {
+            var extensionResponseSystemInfo = new CustomEvent('extensionResponseSystemInfo', {
+                detail: {
+                    method: 'extensionResponseSystemInfo',
+                    data: response.data
+                }
+            });
+            extensionEventBus.dispatchEvent(extensionResponseSystemInfo);
+
         },
 
         /**
          * Вызвать метод указанный в ответе от native-приложения
          */
-        callSetFunction: function (response) {
-            var method = 'set' + response.method;
-            if (window.transoilBrowserExtension[method]) {
-                window.transoilBrowserExtension[method](response);
+        callResponseFunction: function (response) {
+            var method = response.method + 'PocessResponse';
+            if (transoilBrowserExtension[method]) {
+                transoilBrowserExtension[method](response);
             }
         },
 
@@ -70,7 +74,7 @@ var ulResponse;
          */
         dispatchNativeResponse: function (response) {
             if (response.method) {
-                window.transoilBrowserExtension.callSetFunction(response);
+                transoilBrowserExtension.callResponseFunction(response);
             } else {
                 console.log('Unnable to process response, method not defined.');
                 console.log(response);
@@ -78,35 +82,69 @@ var ulResponse;
         }
     };
 
-    setTimeout(findPrintAttachmentListAppletButtons, 5000);
+    subscribeToApplicationEvents();
 })();
+
+/**
+ * Подписка на необходимые события
+ */
+function subscribeToApplicationEvents(ksedEventBus) {
+    if(!eventProcessor){
+        eventProcessor = new EventProcessor();
+    }
+    if (!extensionEventBus) {
+        extensionEventBus = new ExtensionEventBus(window.top);
+    }
+
+    extensionEventBus.addEventListener('tnGetSystemInfo', eventProcessor.onTnGetSystemInfo);
+}
+
+/**
+ * Декоратор для шины событий
+ * @param {*} ksedEventBus 
+ */
+function ExtensionEventBus(ksedEventBus) {
+    var me = this;
+    /**
+     * Объект КСЕД, выступающий в качестве шины событий
+     */
+    this.ksedEventBus = ksedEventBus;
+    /**
+     * Подписаться на событие с наименованием
+     */
+    this.addEventListener = function (eventName, callback) {
+        me.ksedEventBus.addEventListener(eventName, callback);
+    }
+    /**
+     * Возбудить событие
+     */
+    this.dispatchEvent = function (event) {
+        me.ksedEventBus.dispatchEvent(event);
+    }
+}
 
 /**
  * Слушатель события нажатия на кнопку получения системной информации.
  */
-function sendMessageToBackgroundJs() {
-    var request = { source: sourceName, control: this.id, content: JSON.parse(this.dataset.requestData) };
-    var responseCallbackName = this.dataset.responseCallbackName;
+function sendMessageToBackgroundJs(request) {
+    // var request = { source: sourceName, control: this.id, content: JSON.parse(this.dataset.requestData) };
+    // var responseCallbackName = this.dataset.responseCallbackName;
     try {
-        sendMessageIncludeId(request, responseCallbackName)
+        sendMessageIncludeId(request)
     } catch (err) {
         console.error(err);
-        sendMessageExcludeId(request, responseCallbackName);
+        sendMessageExcludeId(request);
     }
 }
 
-function sendMessageIncludeId(request, responseCallbackName) {
+function sendMessageIncludeId(request) {
     console.log('Call: sendMessageIncludeId');
-    chrome.runtime.sendMessage(extId, request, function (response) {
-        console.log(response);
-    });
+    chrome.runtime.sendMessage(extId, request);
 }
 
-function sendMessageExcludeId(request, responseCallbackName) {
+function sendMessageExcludeId(request) {
     console.log('Call: sendMessageExcludeId');
-    chrome.runtime.sendMessage(request, function (response) {
-        console.log(response);
-    });
+    chrome.runtime.sendMessage(request);
 }
 
 /**
@@ -115,8 +153,7 @@ function sendMessageExcludeId(request, responseCallbackName) {
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         console.log(request);
-        window.transoilBrowserExtension.dispatchNativeResponse(request);
-        //addToList(request);
+        transoilBrowserExtension.dispatchNativeResponse(request);
     });
 
 /**
@@ -132,56 +169,6 @@ function addToList(msg) {
     liElement.innerHTML = JSON.stringify(msg);
     ulResponse.appendChild(liElement);
 }
-
-/**
- * Найти кнопки PrintAttachmentListApplet и добавить необходимую функциональность.
- */
-function findPrintAttachmentListAppletButtons() {
-    // First create the event
-    var myEvent = new CustomEvent("userLogin", {
-        detail: {
-            username: "davidwalsh"
-        }
-    });
-
-    // Trigger it!
-    window.top.dispatchEvent(myEvent);
-
-    var windowContent = new WindowContent(window.top);
-    var childFrame = windowContent.getMainactionChildChildFrame();
-
-    if (childFrame) {
-        var contentDocument = childFrame.contentDocument;
-        tnButtonPrintAll = contentDocument.getElementById(TN_BTN_PRINT_PRINT_ALL);
-        if (tnButtonPrintAll) {
-            addListenerToPrintButton(tnButtonPrintAll);
-        }
-
-        tnButtonPrintSelected = contentDocument.getElementById(TN_BTN_PRINT_PRINT_SELECTED);
-        if (tnButtonPrintSelected) {
-            addListenerToPrintButton(tnButtonPrintSelected);
-        }
-    }
-    setTimeout(findPrintAttachmentListAppletButtons, 5000);
-}
-
-function addListenerToPrintButton(btnPrintElement) {
-    if (!btnPrintElement.dataset.isInitialized) {
-        var childButtons = btnPrintElement.getElementsByTagName('button');
-        if (childButtons.length != 0) {
-            var childButton = childButtons[0];
-            childButton.addEventListener('click', function (event) {
-                console.log(childButton);
-                event.stopPropagation();
-            });
-
-            btnPrintElement.dataset.isInitialized = true;
-            btnPrintElement.dataset.requestData = JSON.stringify({ method: "printAttachmentListApplet", data: "java" });
-            btnPrintElement.dataset.responseCallbackName = 'closePrintWindow';
-        }
-    }
-}
-
 
 ///НЕ ИСПОЛЬЗУЕТСЯ
 function createScriptInPage() {
@@ -259,5 +246,22 @@ function WindowContent(topWindow) {
             result = childFrame.contentDocument.getElementsByTagName('frame')[0];
         }
         return result;
+    }
+}
+
+/**
+ * state-less обработчик событий
+ */
+function EventProcessor(){
+    /**
+     * Приложение выполнило запрос версии java
+     */
+    this.onTnGetSystemInfo = function (event) {
+        var request = {
+            source: sourceName,
+            control: '',
+            content: event.detail
+        }
+        sendMessageToBackgroundJs(request);
     }
 }
