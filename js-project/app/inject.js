@@ -48,6 +48,20 @@ var ulResponse;
         },
 
         /**
+         * Вернуть в приложение результат выполнения печати
+         */
+        printAttachmentsPocessResponse: function (response) {
+            var extensionResponsePrintAttachments = new CustomEvent('extensionResponsePrintAttachments', {
+                detail: {
+                    method: 'extensionResponsePrintAttachments',
+                    data: response.data
+                }
+            });
+            extensionEventBus.dispatchEvent(extensionResponsePrintAttachments);
+
+        },
+
+        /**
          * Вызвать метод указанный в ответе от native-приложения
          */
         callResponseFunction: function (response) {
@@ -86,9 +100,7 @@ function subscribeToApplicationEvents(ksedEventBus) {
 
     extensionEventBus.addEventListener('tnGetSystemInfo', eventProcessor.onTnGetSystemInfo);
 
-    extensionEventBus.addEventListener('onTnPrintSelected', eventProcessor.onTnPrintSelected);
-
-    extensionEventBus.addEventListener('onTnPrintAll', eventProcessor.onTnPrintAll);
+    extensionEventBus.addEventListener('tnPrintAttachments', eventProcessor.onTnPrintAttachments);
 }
 
 /**
@@ -108,7 +120,7 @@ function sendMessageToBackgroundJs(request) {
  * @param {*} request 
  */
 function sendMessageIncludeId(request) {
-    console.log('Call: sendMessageIncludeId');
+    console.log('inject.js: sendMessageIncludeId');
     chrome.runtime.sendMessage(extId, request);
 }
 
@@ -242,9 +254,9 @@ function EventProcessor(){
     };
 
     /**
-     * Приложение выполнило запрос на печать выбранных файлов
+     * Приложение выполнило запрос на печать
      */
-    this.onTnPrintSelected = function (event) {
+    this.onTnPrintAttachments = function (event) {
         var request = me.getRequest(event.detail);
         sendMessageToBackgroundJs(request);
     };

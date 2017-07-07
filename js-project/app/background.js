@@ -32,6 +32,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
  */
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
+        console.log('background.js: Incoming message');
         sendToNative(request, sendResponse);
     });
 
@@ -45,6 +46,7 @@ function sendToNative(request, sendResponse) {
             port: port,
             request: request
         });
+        console.log('background.js: sendToNative');
         nativeRequest.postMessage(json);
     } else {
         chrome.runtime.sendNativeMessage(application, json, sendResponse);
@@ -145,6 +147,7 @@ function NativeRequest(config) {
 
     this.postMessage = function (json) {
         me.port.onMessage.addListener(function portOnMessageListener(response) {
+            console.log('background.js: portOnMessageListener');
             port.onMessage.removeListener(portOnMessageListener);
             if (!response.method) {
                 response.method = me.request.content.method;

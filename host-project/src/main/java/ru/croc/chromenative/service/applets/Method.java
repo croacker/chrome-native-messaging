@@ -11,7 +11,7 @@ import com.croc.documentum.print.SystemInfoApplet;
 public enum Method {
     SYSTEM_INFO_APPLET("getSystemInfo" ,SystemInfoApplet.class),
     SWING_TEST_APPLET("swingTestApplet" ,SwingTestApplet.class),
-    PRINT_ATTACHMENT_LIST_APPLET("printAttachmentListApplet", PrintAttachmentListApplet.class),
+    PRINT_ATTACHMENT_LIST_APPLET("printAttachments", PrintAttachmentListApplet.class),
     PRINT_APPLET("printApplet", PrintApplet.class);
 
     private Class appletClass;
