@@ -54,7 +54,7 @@ public class PrintAttachmentListApplet implements IMethod{
         if(arguments != null){
             size = String.valueOf(arguments.size());
         }
-        return "{result: 'sucess', method: 'printAttachments', hashCode: " + hashCode() +", argumentsSize: " + size +" }";
+        return "{result: 'sucess', method: 'printAttachments', hashCode: " + hashCode() +"}";
     }
 
     protected List<File> tempFileList;
