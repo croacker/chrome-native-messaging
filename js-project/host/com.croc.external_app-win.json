@@ -1,7 +1,7 @@
 {
   "name": "com.croc.external_app",
   "description": "My Application",
-  "path": "tnHostApp.bat",
+  "path": "tn-host-app.bat",
   "type": "stdio",
   "allowed_origins": [
   	"chrome-extension://cojmnimkhcalbbhkjifdlimeepcpnfhn/",

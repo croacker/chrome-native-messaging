@@ -18,7 +18,7 @@ public class MainCls {
 
     private static Logger LOGGER;
 
-    public static final String LOG_FILENAME = "d:/tmp/1/extension.log";
+    public static final String LOG_FILENAME = "croc_external_app.log";
 
     public static Logger getLOGGER() {
         if(LOGGER == null){

@@ -1,4 +1,4 @@
 #!/bin/sh
 
 # Рабочий режим запуска.
-java -jar tnHostApp.jar
+java -jar tn-host-app.jar

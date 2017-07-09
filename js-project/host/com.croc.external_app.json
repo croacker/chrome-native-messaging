@@ -1,7 +1,7 @@
 {
   "name": "com.croc.external_app",
   "description": "My Application",
-  "path": "my_host.js",
+  "path": "tn-host-app.sh",
   "type": "stdio",
   "allowed_origins": [
     "chrome-extension://bmfbcejdknlknpncfpeloejonjoledha/"
