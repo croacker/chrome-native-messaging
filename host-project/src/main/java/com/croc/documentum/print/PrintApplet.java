@@ -18,11 +18,11 @@ import java.util.Map;
  */
 public class PrintApplet implements IMethod{
 
-    private Map<String, String> arguments = Collections.EMPTY_MAP;
+    private String data;
 
     @Override
-    public void init(Map<String, String> arguments) {
-        this.arguments = arguments;
+    public void init(String data) {
+        this.data = data;
     }
 
     @Override

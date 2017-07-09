@@ -11,9 +11,8 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -25,6 +24,11 @@ import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
+
+import ru.croc.chromenative.MainCls;
+import ru.croc.chromenative.dto.PrintAttachmentResult;
+import ru.croc.chromenative.service.MapperService;
+import ru.croc.chromenative.util.StringUtils;
 
 /**
  *Конверсия:
@@ -41,91 +45,56 @@ import javax.print.attribute.PrintRequestAttributeSet;
  */
 public class PrintAttachmentListApplet implements IMethod{
 
-    private Map<String, String> arguments = Collections.EMPTY_MAP;
+    private String data;
 
     @Override
-    public void init(Map<String, String> arguments) {
-        this.arguments = arguments;
+    public void init(String data) {
+        this.data = data;
     }
 
     @Override
     public String getResult() {
-        String size = "NULL";
-        if(arguments != null){
-            size = String.valueOf(arguments.size());
+        PrintAttachmentResult result;
+        try {
+            print();
+            result = new PrintAttachmentResult(Result.SUCCESS.getName(), StringUtils.EMPTY);
+        }catch (Exception e){
+            MainCls.getLOGGER().log(Level.INFO, e.getMessage());
+            result = new PrintAttachmentResult(Result.ERROR.getName(), e.getMessage());
         }
-        return "{result: 'sucess', method: 'printAttachments', hashCode: " + hashCode() +"}";
+        return MapperService.getInstance().toString(result);
     }
 
     protected List<File> tempFileList;
 
-    String version = "02.07.2013 1";
-
-    private String printUrl;
-
-    public void start() {
-        printUrl = getParameter("printurl");
-//        window = JSObject.getWindow(this);
-        final int appletWidth = 5;
-        final int appletHeight = 5;
-//        setSize(appletWidth, appletHeight);
-        print(printUrl);
+    public static void main(String[] args) {
+        PrintAttachmentListApplet printAttachmentListApplet = new PrintAttachmentListApplet();
+        printAttachmentListApplet.init("http://127.0.0.1:8082/dev/attachmentcontenttransfer?objectId=09029a768044e838");
+        printAttachmentListApplet.getResult();
     }
 
-    private String getParameter(String key) {
-        return arguments.get(key);
-    }
-
-    public void stop() {
-        /*
-         * if (tempFileList != null){ for (File file : tempFileList){ System.out.println("DELETING FILE: "
-         * +file.getAbsolutePath()); file.delete(); System.out.println("FILE DELETED: "+file.getAbsolutePath()); } }
-         */
-    }
-
-    protected void print(final String attachmentURL) {
+    protected void print() {
         try {
-
+            String attachmentURL = data;
             tempFileList = downloadAndUnzip(attachmentURL);
-
             for (File tempFile : tempFileList) {
-                System.out.println("PRINTING: " + tempFile.getAbsolutePath());
+                MainCls.getLOGGER().log(Level.INFO,"PRINTING: " + tempFile.getAbsolutePath());
                 printFile(tempFile);
-                System.out.println("FILE PRINTED: " + tempFile.getAbsolutePath());
+                MainCls.getLOGGER().log(Level.INFO,"FILE PRINTED: " + tempFile.getAbsolutePath());
             }
-
         } catch (final Throwable e) {
             e.printStackTrace();
-        } finally {
-            closeComponent();
         }
     }
 
     protected void printFile(final File file) throws Exception {
-
         printFileViaDesktop(file);
-
-        // if (! isPDF(file)){
-        //
-        // printFileViaDesktop(file);
-        //
-        // } else {
-        //
-        // if (! printPDFDirectly(file)){
-        // printFileViaDesktop(file);
-        // }
-        // }
-
     }
 
     protected boolean printPDFDirectly(final File file) {
-
         PrintService defaultPrintService = PrintServiceLookup.lookupDefaultPrintService();
-
         DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;
-
         PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
-
         DocPrintJob printerJob;
         printerJob = defaultPrintService.createPrintJob();
         Doc doc = null;
@@ -133,12 +102,9 @@ public class PrintAttachmentListApplet implements IMethod{
         try {
             fileStream = new FileInputStream(file);
             doc = new SimpleDoc(fileStream, flavor, null);
-
             printerJob.print(doc, aset);
         } catch (final Throwable e) {
-
             return false;
-
         } finally {
             try {
                 if (doc.getStreamForBytes() != null) {
@@ -148,9 +114,7 @@ public class PrintAttachmentListApplet implements IMethod{
                     fileStream.close();
                 }
             } catch (final Throwable e) {
-
                 return false;
-
             }
         }
         return true;
@@ -183,50 +147,43 @@ public class PrintAttachmentListApplet implements IMethod{
 
     protected List<File> downloadAndUnzip(final String attachmentURL) throws Exception {
         List<File> result = new ArrayList<>();
-
         InputStream urlStream = null;
         ZipInputStream zippedStream = null;
         try {
             URL url = new URL(getDocumentBase(), attachmentURL);
-
             urlStream = new BufferedInputStream(url.openStream());
-            System.out.println("GETTING STREAM FROM: " + url.toString());
-
+            MainCls.getLOGGER().log(Level.INFO, "GETTING STREAM FROM: " + url.toString());
             zippedStream = new ZipInputStream(urlStream);
-
             ZipEntry entry;
             while ((entry = zippedStream.getNextEntry()) != null) {
-
                 File file = createTempFileFromZippedStream(entry.getName(), zippedStream);
-                System.out.println("TEMP FILE CREATED: " + file.getAbsolutePath());
-
+                MainCls.getLOGGER().log(Level.INFO, "TEMP FILE CREATED: " + file.getAbsolutePath());
                 result.add(file);
-
                 zippedStream.closeEntry();
             }
-
         } catch (final Throwable e) {
-            throw new Exception("Exception when downloading and uzipping files form " + attachmentURL, e);
+            String message = "Exception when downloading and uzipping files form " + attachmentURL;
+            MainCls.getLOGGER().log(Level.INFO, message);
+            MainCls.getLOGGER().log(Level.INFO, e.getMessage());
+            throw new Exception(message, e);
         } finally {
-
             try {
                 if (urlStream != null) {
                     urlStream.close();
-                    System.out.println("URL STREAM CLOSED");
+                    MainCls.getLOGGER().log(Level.INFO,"URL STREAM CLOSED");
                 }
-
                 if (zippedStream != null) {
                     zippedStream.close();
-                    System.out.println("ZIP STREAM CLOSED");
+                    MainCls.getLOGGER().log(Level.INFO,"ZIP STREAM CLOSED");
                 }
             } catch (final Throwable e) {
-                throw new Exception("Exception when closing streams form " + attachmentURL, e);
+                String message = "Exception when closing streams form " + attachmentURL;
+                MainCls.getLOGGER().log(Level.INFO, message);
+                MainCls.getLOGGER().log(Level.INFO, e.getMessage());
+                throw new Exception(message, e);
             }
-
         }
-
         return result;
-
     }
 
     protected File createTempFileFromZippedStream(final String entryName, final ZipInputStream zippedStream)
@@ -248,11 +205,6 @@ public class PrintAttachmentListApplet implements IMethod{
         }
     }
 
-    protected void closeComponent() {
-        //window.eval("printFinish();");
-
-    }
-
     protected boolean isPDF(final File file) {
         String fileName = file.getAbsolutePath();
         String extension = "";
@@ -266,10 +218,28 @@ public class PrintAttachmentListApplet implements IMethod{
     public URL getDocumentBase() {
         URL url;
         try {
-             url = new URL(getParameter("url"));
+             url = new URL(data);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
         return url;
+    }
+
+    /**
+     * Результат выполненич
+     */
+    private enum Result{
+        SUCCESS("success"),
+        ERROR("error");
+
+        private final String success;
+
+        public String getName() {
+            return success;
+        }
+
+        Result(String success) {
+            this.success = success;
+        }
     }
 }

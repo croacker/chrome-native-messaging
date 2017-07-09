@@ -162,7 +162,7 @@ function NativeRequest(config) {
         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
             if (me.tabId) {
                 chrome.tabs.sendMessage(me.tabId, response);
-            }
+            }            
         });
     }
 

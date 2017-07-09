@@ -19,6 +19,7 @@ public class JavaAppletService {
 
     public String execute(NativeRequest request){
         IMethod method = BeanService.getInstance().getMethod(request);
+        method.init(request.getData());
         return method.getResult();
     }
 

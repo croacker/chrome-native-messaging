@@ -1,22 +1,19 @@
 package com.croc.documentum.print;
 
-import java.util.Collections;
-import java.util.Map;
-
 /**
  *
  */
 public class SystemInfoApplet  implements IMethod {
 
-    private Map<String, String> arguments = Collections.EMPTY_MAP;
+    private String data;
 
     public String getJavaVersion() {
         return System.getProperty("java.version");
     }
 
     @Override
-    public void init(Map<String, String> arguments) {
-        this.arguments = arguments;
+    public void init(String data) {
+        this.data = data;
     }
 
     @Override
