@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 /**
  * То
  */
-public class MainCls {
+public class HostApplication {
 
     private static Logger LOGGER;
 
@@ -31,11 +31,11 @@ public class MainCls {
         return LOGGER;
     }
 
-    private static MainCls instance;
+    private static HostApplication instance;
 
-    public static MainCls getInstance() {
+    public static HostApplication getInstance() {
         if(instance == null){
-            instance = new MainCls();
+            instance = new HostApplication();
         }
         return instance;
     }
@@ -66,7 +66,7 @@ public class MainCls {
     }
 
     private static Logger initLogger() throws IOException {
-        Logger logger = Logger.getLogger(MainCls.class.getName());
+        Logger logger = Logger.getLogger(HostApplication.class.getName());
         FileHandler fileHandler = new FileHandler(LOG_FILENAME);
         fileHandler.setLevel(Level.ALL);
         logger.addHandler(fileHandler);

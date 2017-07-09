@@ -57,7 +57,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>ru.croc.chromenative.MainCls</mainClass>
+                            <mainClass>ru.croc.chromenative.HostApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

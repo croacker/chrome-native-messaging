@@ -37,7 +37,7 @@ public class Job implements Runnable {
             String responseJson = stringWriter.toString();
             CommunicateService.getInstance().sendMessage(responseJson);
         } catch (IOException e) {
-            MainCls.getLOGGER().log(Level.INFO, e.getMessage());
+            HostApplication.getLOGGER().log(Level.INFO, e.getMessage());
         }
     }
 

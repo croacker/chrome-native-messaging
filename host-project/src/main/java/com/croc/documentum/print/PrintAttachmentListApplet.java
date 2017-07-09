@@ -25,7 +25,7 @@ import javax.print.SimpleDoc;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 
-import ru.croc.chromenative.MainCls;
+import ru.croc.chromenative.HostApplication;
 import ru.croc.chromenative.dto.PrintAttachmentResult;
 import ru.croc.chromenative.service.MapperService;
 import ru.croc.chromenative.util.StringUtils;
@@ -59,7 +59,7 @@ public class PrintAttachmentListApplet implements IMethod{
             print();
             result = new PrintAttachmentResult(Result.SUCCESS.getName(), StringUtils.EMPTY);
         }catch (Exception e){
-            MainCls.getLOGGER().log(Level.INFO, e.getMessage());
+            HostApplication.getLOGGER().log(Level.INFO, e.getMessage());
             result = new PrintAttachmentResult(Result.ERROR.getName(), e.getMessage());
         }
         return MapperService.getInstance().toString(result);
@@ -78,9 +78,9 @@ public class PrintAttachmentListApplet implements IMethod{
             String attachmentURL = data;
             tempFileList = downloadAndUnzip(attachmentURL);
             for (File tempFile : tempFileList) {
-                MainCls.getLOGGER().log(Level.INFO,"PRINTING: " + tempFile.getAbsolutePath());
+                HostApplication.getLOGGER().log(Level.INFO,"PRINTING: " + tempFile.getAbsolutePath());
                 printFile(tempFile);
-                MainCls.getLOGGER().log(Level.INFO,"FILE PRINTED: " + tempFile.getAbsolutePath());
+                HostApplication.getLOGGER().log(Level.INFO,"FILE PRINTED: " + tempFile.getAbsolutePath());
             }
         } catch (final Throwable e) {
             e.printStackTrace();
@@ -152,34 +152,34 @@ public class PrintAttachmentListApplet implements IMethod{
         try {
             URL url = new URL(getDocumentBase(), attachmentURL);
             urlStream = new BufferedInputStream(url.openStream());
-            MainCls.getLOGGER().log(Level.INFO, "GETTING STREAM FROM: " + url.toString());
+            HostApplication.getLOGGER().log(Level.INFO, "GETTING STREAM FROM: " + url.toString());
             zippedStream = new ZipInputStream(urlStream);
             ZipEntry entry;
             while ((entry = zippedStream.getNextEntry()) != null) {
                 File file = createTempFileFromZippedStream(entry.getName(), zippedStream);
-                MainCls.getLOGGER().log(Level.INFO, "TEMP FILE CREATED: " + file.getAbsolutePath());
+                HostApplication.getLOGGER().log(Level.INFO, "TEMP FILE CREATED: " + file.getAbsolutePath());
                 result.add(file);
                 zippedStream.closeEntry();
             }
         } catch (final Throwable e) {
             String message = "Exception when downloading and uzipping files form " + attachmentURL;
-            MainCls.getLOGGER().log(Level.INFO, message);
-            MainCls.getLOGGER().log(Level.INFO, e.getMessage());
+            HostApplication.getLOGGER().log(Level.INFO, message);
+            HostApplication.getLOGGER().log(Level.INFO, e.getMessage());
             throw new Exception(message, e);
         } finally {
             try {
                 if (urlStream != null) {
                     urlStream.close();
-                    MainCls.getLOGGER().log(Level.INFO,"URL STREAM CLOSED");
+                    HostApplication.getLOGGER().log(Level.INFO,"URL STREAM CLOSED");
                 }
                 if (zippedStream != null) {
                     zippedStream.close();
-                    MainCls.getLOGGER().log(Level.INFO,"ZIP STREAM CLOSED");
+                    HostApplication.getLOGGER().log(Level.INFO,"ZIP STREAM CLOSED");
                 }
             } catch (final Throwable e) {
                 String message = "Exception when closing streams form " + attachmentURL;
-                MainCls.getLOGGER().log(Level.INFO, message);
-                MainCls.getLOGGER().log(Level.INFO, e.getMessage());
+                HostApplication.getLOGGER().log(Level.INFO, message);
+                HostApplication.getLOGGER().log(Level.INFO, e.getMessage());
                 throw new Exception(message, e);
             }
         }

@@ -2,7 +2,7 @@ package ru.croc.chromenative.service;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ru.croc.chromenative.MainCls;
+import ru.croc.chromenative.HostApplication;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -33,7 +33,7 @@ public class MapperService {
         try {
             getMapper().writeValue(stringWriter, obj);
         } catch (IOException e) {
-            MainCls.getLOGGER().log(Level.INFO, e.getMessage());
+            HostApplication.getLOGGER().log(Level.INFO, e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }
         return stringWriter.toString();
