@@ -12,6 +12,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jackson.version>2.7.3</jackson.version>
         <junit.version>4.12</junit.version>
+        <final.jar.name>tnHostApp</final.jar.name>
     </properties>
 
     <dependencies>
@@ -49,6 +50,8 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.4.1</version>
                 <configuration>
+                    <finalName>${final.jar.name}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>

@@ -36,7 +36,11 @@ chrome.runtime.onMessage.addListener(
         sendToNative(request, sendResponse);
     });
 
-///Отправить сообщение в native-приложение
+/**
+ * Отправить сообщение в native-приложение
+ * @param {*} request 
+ * @param {*} sendResponse 
+ */
 function sendToNative(request, sendResponse) {
     var json = request.content;
     var port = getPort();
@@ -135,7 +139,7 @@ function TransoilTab(tabId, changeInfo, tab) {
 };
 
 /**
- * Объект для выполнения запроса к native-приложению
+ * Класс для выполнения запроса к native-приложению
  * @param {*} tabId 
  * @param {*} request 
  */

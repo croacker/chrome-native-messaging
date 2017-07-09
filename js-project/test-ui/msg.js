@@ -25,6 +25,5 @@ function log(msg) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  // document.getElementById('javaversion-button').addEventListener(
-  //   'click', sendMessageToExtension);
+
 });

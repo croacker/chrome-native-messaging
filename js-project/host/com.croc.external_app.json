@@ -1,7 +1,7 @@
 {
   "name": "com.croc.external_app",
   "description": "My Application",
-  "path": "/Users/jason/code/chrome-native-messaging/host/my_host.js",
+  "path": "my_host.js",
   "type": "stdio",
   "allowed_origins": [
     "chrome-extension://bmfbcejdknlknpncfpeloejonjoledha/"

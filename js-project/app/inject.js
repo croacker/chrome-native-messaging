@@ -2,12 +2,12 @@ var sourceName = 'inject.js';
 var extId = 'bmfbcejdknlknpncfpeloejonjoledha';
 
 /**
- * Объект расширения
+ * Объект extension
  */
 var tnBrowserExtension;
 
 /**
- * Шина событий для расширения
+ * Шина событий для extension
  */
 var extensionEventBus;
 /**
@@ -146,74 +146,6 @@ function addToList(msg) {
     liElement.innerHTML = JSON.stringify(msg);
     ulResponse.appendChild(liElement);
 }
-
-/**
- * Поиск нужного фрейма(К УДАЛЕНИЮ)
- * @param {*} topWindow 
- */
-function WindowContent(topWindow) {
-    var me = this;
-    this.topWindow = topWindow;
-
-    this.getViewFrame = function () {
-        return this.topWindow.document.getElementsByTagName('frame')['view'];
-    }
-
-    this.getWorkareaFrame = function () {
-        var result;
-        var viewFrame = me.getViewFrame();
-        if (viewFrame) {
-            result = viewFrame.contentDocument.getElementsByTagName('frame')['workarea'];
-        }
-        return result;
-    }
-
-    this.getContentFrame = function () {
-        var result;
-        var workareaFrame = me.getWorkareaFrame();
-        if (workareaFrame) {
-            result = workareaFrame.contentDocument.getElementsByTagName('frame')['content'];
-        }
-        return result;
-    }
-
-    this.getMainactionFrame = function () {
-        var result;
-        var contentFrame = me.getContentFrame();
-        if (contentFrame) {
-            var childFrames = contentFrame.contentDocument.getElementsByTagName('frame');
-            if (childFrames.length != 0) {
-                var childOfChild = childFrames[0].contentDocument.getElementsByTagName('frame')
-                if (childOfChild.length != 0) {
-                    var mainactionDiv = childOfChild[0].contentDocument.getElementById('mainactionframe');
-                    if (mainactionDiv) {
-                        result = mainactionDiv.getElementsByTagName('iframe')[0];
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    this.getMainactionChildFrame = function () {
-        var result;
-        var mainactionFrame = me.getMainactionFrame();
-        if (mainactionFrame) {
-            result = mainactionFrame.contentDocument.getElementsByTagName('iframe')[0];
-        }
-        return result;
-    }
-
-    this.getMainactionChildChildFrame = function () {
-        var result;
-        var childFrame = me.getMainactionChildFrame();
-        if (childFrame) {
-            result = childFrame.contentDocument.getElementsByTagName('frame')[0];
-        }
-        return result;
-    }
-}
-
 
 /**
  * Декоратор для шины событий
