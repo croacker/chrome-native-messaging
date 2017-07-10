@@ -44,11 +44,10 @@ var ulResponse;
                 }
             });
             extensionEventBus.dispatchEvent(extensionResponseSystemInfo);
-
         },
 
         /**
-         * Вернуть в приложение результат выполнения печати
+         * Вернуть в приложение результат выполнения печати вложений
          */
         printAttachmentsPocessResponse: function (response) {
             var extensionResponsePrintAttachments = new CustomEvent('extensionResponsePrintAttachments', {
@@ -58,7 +57,19 @@ var ulResponse;
                 }
             });
             extensionEventBus.dispatchEvent(extensionResponsePrintAttachments);
+        },
 
+        /**
+         * Вернуть в приложение результат выполнения печати штрих-кода
+         */
+        printBarcodePocessResponse: function (response) {
+            var extensionResponsePrintAttachments = new CustomEvent('extensionResponsePrintBarcode', {
+                detail: {
+                    method: 'extensionResponsePrintBarcode',
+                    data: response.data
+                }
+            });
+            extensionEventBus.dispatchEvent(extensionResponsePrintAttachments);
         },
 
         /**
@@ -101,6 +112,8 @@ function subscribeToApplicationEvents(ksedEventBus) {
     extensionEventBus.addEventListener('tnGetSystemInfo', eventProcessor.onTnGetSystemInfo);
 
     extensionEventBus.addEventListener('tnPrintAttachments', eventProcessor.onTnPrintAttachments);
+
+    extensionEventBus.addEventListener('tnPrintBarcode', eventProcessor.onTnPrintBarcode);
 }
 
 /**
@@ -196,7 +209,7 @@ function EventProcessor(){
     /**
      * Приложение выполнило запрос на печать всех файлов
      */
-    this.onTnPrintAll = function (event) {
+    this.onTnPrintBarcode = function (event) {
         var request = me.getRequest(event.detail);
         sendMessageToBackgroundJs(request);
     };

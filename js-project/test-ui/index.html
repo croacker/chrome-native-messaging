@@ -9,16 +9,22 @@
 </head>
 
 <body>
-  <h2>Тестирование Croc browser extension</h2>
+  <h2>Тестирование Chrome CROC Native Messaging</h2>
   <div class='action-container'>
     <label class='action-caption'>Версия JRE</label>
     <button type="submit" id='jreinfo-button' class='action-button'>Получить</button>
   </div>
   <div class='action-container'>
     <label class='action-caption'>URL сервлета и objectId</label>
-    <input id='servlet-url' class='action-input' 
+    <input id='printdocs-url' class='action-input' 
     placeholder='http://host:port/app/attachmentcontenttransfer?objectId=r_object_id'/>
     <button type="submit" id='printdocs-button' class='action-button'>Печать</button>
+  </div>
+  <div class='action-container'>
+    <label class='action-caption'>URL сервлета и documentId</label>
+    <input id='printbarcode-url' class='action-input' 
+    placeholder='http://host:port/app/barcodegen?documentId=r_object_id'/>
+    <button type="submit" id='printbarcode-button' class='action-button'>Печать</button>
   </div>
   <ul id='native-response'>
   </ul>

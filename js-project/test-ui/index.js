@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
     sendMessageToExtension('tnGetSystemInfo', { method: 'getSystemInfo', data: 'jre' });
   });
 
-  var servletUrl = document.getElementById('servlet-url');
+  var servletUrl = document.getElementById('printdocs-url');
   document.getElementById('printdocs-button').addEventListener('click', function () {
     if (servletUrl.value) {
       subscribeToExtensionEvent('extensionResponsePrintAttachments');
