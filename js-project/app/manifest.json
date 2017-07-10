@@ -23,6 +23,7 @@
     "https://*/*",
     "http://*/*",
     "http://127.0.0.1:8082/*",
+    "file:///*",
     "tabs",
     "nativeMessaging"
   ]
