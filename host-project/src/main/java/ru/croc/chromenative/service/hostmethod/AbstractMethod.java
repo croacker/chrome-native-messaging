@@ -1,13 +1,15 @@
-package com.croc.documentum.print;
+package ru.croc.chromenative.service.hostmethod;
 
 import ru.croc.chromenative.dto.PrintResult;
-import ru.croc.chromenative.service.applets.Result;
 
 /**
- *
+ * Некоторый абстрактный метод хоста
  */
 public abstract class AbstractMethod implements IMethod {
 
+    /**
+     * Данные полученные из Browser extension.
+     */
     private String data;
 
     public String getData() {
@@ -24,10 +26,10 @@ public abstract class AbstractMethod implements IMethod {
     }
 
     protected PrintResult getError(String message){
-        return new PrintResult(Result.ERROR.getName(), message);
+        return new PrintResult(ResultStatus.ERROR.getName(), message);
     }
 
     protected PrintResult getSuccess(String message){
-        return new PrintResult(Result.SUCCESS.getName(), message);
+        return new PrintResult(ResultStatus.SUCCESS.getName(), message);
     }
 }

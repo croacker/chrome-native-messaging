@@ -13,7 +13,9 @@ import java.util.logging.Level;
  */
 public class MapperService {
 
-
+    /**
+     * Статический экземпляр, замена DI
+     */
     private static MapperService instance;
 
     public static MapperService getInstance() {
@@ -23,12 +25,21 @@ public class MapperService {
         return instance;
     }
 
+    /**
+     * Подготовленный объект для трансляции объекта в json либо обратно.
+     * @return
+     */
     public ObjectMapper getMapper(){
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
         return mapper;
     }
 
+    /**
+     * Объект в json-строку.
+     * @param obj
+     * @return
+     */
     public String toString(Object obj){
         StringWriter stringWriter = new StringWriter();
         try {

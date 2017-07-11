@@ -1,14 +1,17 @@
 package ru.croc.chromenative.service;
 
-import com.croc.documentum.print.IMethod;
 import ru.croc.chromenative.dto.NativeRequest;
-import ru.croc.chromenative.service.applets.Method;
+import ru.croc.chromenative.service.hostmethod.IMethod;
+import ru.croc.chromenative.service.hostmethod.Methods;
 
 /**
- * Created by agumenyuk on 28.06.2017.
+ *
  */
 public class BeanService {
 
+    /**
+     * Статический экземпляр, замена DI
+     */
     private static BeanService instance;
 
     public static BeanService getInstance() {
@@ -19,11 +22,11 @@ public class BeanService {
     }
 
     public IMethod getMethod(NativeRequest request){
-        Method method = Method.get(request.getMethod());
+        Methods method = Methods.get(request.getMethod());
         return newInstance(method);
     }
 
-    private IMethod newInstance(Method method) {
+    private IMethod newInstance(Methods method) {
         IMethod result;
         try {
             result = (IMethod) method.getAppletClass().newInstance();

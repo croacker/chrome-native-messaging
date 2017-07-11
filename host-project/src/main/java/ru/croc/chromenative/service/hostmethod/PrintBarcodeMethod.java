@@ -1,4 +1,4 @@
-package com.croc.documentum.print;
+package ru.croc.chromenative.service.hostmethod;
 
 import ru.croc.chromenative.HostApplication;
 import ru.croc.chromenative.dto.PrintResult;
@@ -27,7 +27,7 @@ import java.net.URL;
  * ARCHIVE="/uht/_0/1bk3vhj10-dvoo/applets/scan/scan.jar" CODEBASE="/uht/applets/scan" width="1px" height="1px"
  * MAYSCRIPT> <param name="printurl" value="/uht/barcodegen?documentId=0900029a808d4eb8"/> </APPLET>
  */
-public class BarcodeApplet extends AbstractMethod {
+public class PrintBarcodeMethod extends AbstractMethod {
 
     /**
      * Параметры печати.
@@ -57,9 +57,9 @@ public class BarcodeApplet extends AbstractMethod {
     private HashPrintRequestAttributeSet printRequestAttributeSet;
 
     public static void main(String[] args) {
-        BarcodeApplet barcodeApplet = new BarcodeApplet();
-        barcodeApplet.init("http://127.0.0.1:8082/dev/barcodegen?documentId=09029a76804e268c");
-        System.out.println(barcodeApplet.getResult());
+        PrintBarcodeMethod printBarcodeMethod = new PrintBarcodeMethod();
+        printBarcodeMethod.init("http://127.0.0.1:8082/dev/barcodegen?documentId=09029a76804e268c");
+        System.out.println(printBarcodeMethod.getResult());
     }
 
     @Override

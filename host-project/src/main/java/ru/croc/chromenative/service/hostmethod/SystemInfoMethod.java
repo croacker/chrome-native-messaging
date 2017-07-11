@@ -1,9 +1,10 @@
-package com.croc.documentum.print;
+package ru.croc.chromenative.service.hostmethod;
 
 /**
- *
+ * Метод хоста для получения системной информации.
+ * Сейчас, только версия JRE.
  */
-public class SystemInfoApplet  implements IMethod {
+public class SystemInfoMethod implements IMethod {
 
     private String data;
 

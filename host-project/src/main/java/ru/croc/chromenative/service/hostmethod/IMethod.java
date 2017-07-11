@@ -1,4 +1,4 @@
-package com.croc.documentum.print;
+package ru.croc.chromenative.service.hostmethod;
 
 /**
  * Created by agumenyuk on 28.06.2017.

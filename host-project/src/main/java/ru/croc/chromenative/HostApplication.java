@@ -3,17 +3,19 @@ package ru.croc.chromenative;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ru.croc.chromenative.dto.NativeRequest;
+import ru.croc.chromenative.job.Job;
 import ru.croc.chromenative.service.CommunicateService;
+import ru.croc.chromenative.service.JobService;
 import ru.croc.chromenative.service.MapperService;
-import ru.croc.chromenative.util.StringUtils;
 
 import java.io.IOException;
+import java.util.concurrent.Future;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * То
+ * т.н. Native application для Browser extension.
  */
 public class HostApplication {
 
@@ -32,6 +34,9 @@ public class HostApplication {
         return LOGGER;
     }
 
+    /**
+     * Экземпляр приложения.
+     */
     private static HostApplication instance;
 
     public static HostApplication getInstance() {
@@ -46,10 +51,15 @@ public class HostApplication {
             getInstance().run();
             System.exit(0);
         }catch (Exception e){
+            JobService.getInstance().shutdownNow();
             log(e.getMessage());
         }
     }
 
+    /**
+     * Инициирует бесконечное чтение потока ввода, для получения сообщений от Browser extension
+     * @throws Exception
+     */
     private void run() throws Exception {
         boolean stop = false;
         for(;;) {
@@ -57,7 +67,7 @@ public class HostApplication {
             log("Request JSON: " + requestJson);
             ObjectMapper mapper = MapperService.getInstance().getMapper();
             NativeRequest request = mapper.readValue(requestJson, NativeRequest.class);
-            new Thread(new Job(request)).start();
+            JobService.getInstance().submit(request);
             if(stop){
                 break;
             }

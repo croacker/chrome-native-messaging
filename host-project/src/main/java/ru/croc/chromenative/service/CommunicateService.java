@@ -9,6 +9,9 @@ import java.io.InterruptedIOException;
  */
 public class CommunicateService {
 
+    /**
+     * Статический экземпляр, замена DI
+     */
     private static CommunicateService instance;
 
     public static CommunicateService getInstance() {

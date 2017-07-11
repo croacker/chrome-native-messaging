@@ -1,18 +1,21 @@
 package ru.croc.chromenative.service;
 
-import com.croc.documentum.print.IMethod;
 import ru.croc.chromenative.dto.NativeRequest;
+import ru.croc.chromenative.service.hostmethod.IMethod;
 
 /**
  * Created by agumenyuk on 28.06.2017.
  */
-public class JavaAppletService {
+public class HostMethodsService {
 
-    private static JavaAppletService instance;
+    /**
+     * Статический экземпляр, замена DI
+     */
+    private static HostMethodsService instance;
 
-    public static JavaAppletService getInstance() {
+    public static HostMethodsService getInstance() {
         if (instance == null){
-            instance = new JavaAppletService();
+            instance = new HostMethodsService();
         }
         return instance;
     }

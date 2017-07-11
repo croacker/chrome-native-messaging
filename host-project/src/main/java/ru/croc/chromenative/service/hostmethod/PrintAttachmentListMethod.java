@@ -1,4 +1,4 @@
-package com.croc.documentum.print;
+package ru.croc.chromenative.service.hostmethod;
 
 import java.awt.*;
 import java.io.BufferedInputStream;
@@ -42,7 +42,7 @@ import ru.croc.chromenative.util.StringUtils;
  <param name="printurl" value="/uht/attachmentcontenttransfer?objectId=0900029a80864154"/>
  </APPLET>
  */
-public class PrintAttachmentListApplet extends AbstractMethod{
+public class PrintAttachmentListMethod extends AbstractMethod{
 
     @Override
     public String getResult() {
@@ -59,9 +59,9 @@ public class PrintAttachmentListApplet extends AbstractMethod{
     protected List<File> tempFileList;
 
     public static void main(String[] args) {
-        PrintAttachmentListApplet printAttachmentListApplet = new PrintAttachmentListApplet();
-        printAttachmentListApplet.init("http://127.0.0.1:8082/dev/attachmentcontenttransfer?objectId=09029a768044e838");
-        printAttachmentListApplet.getResult();
+        PrintAttachmentListMethod printAttachmentListMethod = new PrintAttachmentListMethod();
+        printAttachmentListMethod.init("http://127.0.0.1:8082/dev/attachmentcontenttransfer?objectId=09029a768044e838");
+        printAttachmentListMethod.getResult();
     }
 
     protected PrintResult print() {
