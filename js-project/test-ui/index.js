@@ -52,6 +52,19 @@ document.addEventListener('DOMContentLoaded', function () {
       subscribeToExtensionEvent('extensionResponsePrintAttachments');
       sendMessageToExtension('tnPrintAttachments', { method: 'printAttachments', data: servletUrl.value });
       log(servletUrl.value);
+    }else{
+      console.log('Not specified print attachments URL!');
+    }
+  });
+
+  var barcodeUrl = document.getElementById('printbarcode-url');
+  document.getElementById('printbarcode-button').addEventListener('click', function () {
+    if (barcodeUrl.value) {
+      subscribeToExtensionEvent('extensionResponsePrintBarcode');
+      sendMessageToExtension('tnPrintBarcode', { method: 'printBarcode', data: barcodeUrl.value });
+      log(barcodeUrl.value);
+    }else{
+      console.log('Not specified barcode URL!');
     }
   });
 

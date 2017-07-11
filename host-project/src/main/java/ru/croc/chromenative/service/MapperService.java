@@ -9,9 +9,10 @@ import java.io.StringWriter;
 import java.util.logging.Level;
 
 /**
- * Created by agumenyuk on 09.07.2017.
+ * Сервис трансляции json в объекты и обратно.
  */
 public class MapperService {
+
 
     private static MapperService instance;
 
@@ -33,7 +34,7 @@ public class MapperService {
         try {
             getMapper().writeValue(stringWriter, obj);
         } catch (IOException e) {
-            HostApplication.getLOGGER().log(Level.INFO, e.getMessage());
+            HostApplication.log(e.getMessage());
             throw new RuntimeException(e.getMessage(), e);
         }
         return stringWriter.toString();

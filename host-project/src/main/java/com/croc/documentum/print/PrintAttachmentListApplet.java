@@ -12,7 +12,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -26,7 +25,7 @@ import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 
 import ru.croc.chromenative.HostApplication;
-import ru.croc.chromenative.dto.PrintAttachmentResult;
+import ru.croc.chromenative.dto.PrintResult;
 import ru.croc.chromenative.service.MapperService;
 import ru.croc.chromenative.util.StringUtils;
 
@@ -43,24 +42,16 @@ import ru.croc.chromenative.util.StringUtils;
  <param name="printurl" value="/uht/attachmentcontenttransfer?objectId=0900029a80864154"/>
  </APPLET>
  */
-public class PrintAttachmentListApplet implements IMethod{
-
-    private String data;
-
-    @Override
-    public void init(String data) {
-        this.data = data;
-    }
+public class PrintAttachmentListApplet extends AbstractMethod{
 
     @Override
     public String getResult() {
-        PrintAttachmentResult result;
+        PrintResult result;
         try {
-            print();
-            result = new PrintAttachmentResult(Result.SUCCESS.getName(), StringUtils.EMPTY);
+            result = print();
         }catch (Exception e){
-            HostApplication.getLOGGER().log(Level.INFO, e.getMessage());
-            result = new PrintAttachmentResult(Result.ERROR.getName(), e.getMessage());
+            HostApplication.log(e.getMessage());
+            result = getError(e.getMessage());
         }
         return MapperService.getInstance().toString(result);
     }
@@ -73,18 +64,21 @@ public class PrintAttachmentListApplet implements IMethod{
         printAttachmentListApplet.getResult();
     }
 
-    protected void print() {
+    protected PrintResult print() {
+        PrintResult result;
         try {
-            String attachmentURL = data;
+            String attachmentURL = getData();
             tempFileList = downloadAndUnzip(attachmentURL);
             for (File tempFile : tempFileList) {
-                HostApplication.getLOGGER().log(Level.INFO,"PRINTING: " + tempFile.getAbsolutePath());
+                HostApplication.log("PRINTING: " + tempFile.getAbsolutePath());
                 printFile(tempFile);
-                HostApplication.getLOGGER().log(Level.INFO,"FILE PRINTED: " + tempFile.getAbsolutePath());
+                HostApplication.log("FILE PRINTED: " + tempFile.getAbsolutePath());
             }
+            result = getSuccess(StringUtils.EMPTY);
         } catch (final Throwable e) {
-            e.printStackTrace();
+            throw new RuntimeException(e.getMessage(), e);
         }
+        return result;
     }
 
     protected void printFile(final File file) throws Exception {
@@ -152,34 +146,34 @@ public class PrintAttachmentListApplet implements IMethod{
         try {
             URL url = new URL(getDocumentBase(), attachmentURL);
             urlStream = new BufferedInputStream(url.openStream());
-            HostApplication.getLOGGER().log(Level.INFO, "GETTING STREAM FROM: " + url.toString());
+            HostApplication.log("GETTING STREAM FROM: " + url.toString());
             zippedStream = new ZipInputStream(urlStream);
             ZipEntry entry;
             while ((entry = zippedStream.getNextEntry()) != null) {
                 File file = createTempFileFromZippedStream(entry.getName(), zippedStream);
-                HostApplication.getLOGGER().log(Level.INFO, "TEMP FILE CREATED: " + file.getAbsolutePath());
+                HostApplication.log("TEMP FILE CREATED: " + file.getAbsolutePath());
                 result.add(file);
                 zippedStream.closeEntry();
             }
         } catch (final Throwable e) {
             String message = "Exception when downloading and uzipping files form " + attachmentURL;
-            HostApplication.getLOGGER().log(Level.INFO, message);
-            HostApplication.getLOGGER().log(Level.INFO, e.getMessage());
+            HostApplication.log(message);
+            HostApplication.log(e.getMessage());
             throw new Exception(message, e);
         } finally {
             try {
                 if (urlStream != null) {
                     urlStream.close();
-                    HostApplication.getLOGGER().log(Level.INFO,"URL STREAM CLOSED");
+                    HostApplication.log("URL STREAM CLOSED");
                 }
                 if (zippedStream != null) {
                     zippedStream.close();
-                    HostApplication.getLOGGER().log(Level.INFO,"ZIP STREAM CLOSED");
+                    HostApplication.log("ZIP STREAM CLOSED");
                 }
             } catch (final Throwable e) {
                 String message = "Exception when closing streams form " + attachmentURL;
-                HostApplication.getLOGGER().log(Level.INFO, message);
-                HostApplication.getLOGGER().log(Level.INFO, e.getMessage());
+                HostApplication.log(message);
+                HostApplication.log(e.getMessage());
                 throw new Exception(message, e);
             }
         }
@@ -218,28 +212,10 @@ public class PrintAttachmentListApplet implements IMethod{
     public URL getDocumentBase() {
         URL url;
         try {
-             url = new URL(data);
+             url = new URL(getData());
         } catch (MalformedURLException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
         return url;
-    }
-
-    /**
-     * Результат выполненич
-     */
-    private enum Result{
-        SUCCESS("success"),
-        ERROR("error");
-
-        private final String success;
-
-        public String getName() {
-            return success;
-        }
-
-        Result(String success) {
-            this.success = success;
-        }
     }
 }

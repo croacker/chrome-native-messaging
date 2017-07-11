@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.croc.chromenative.dto.NativeRequest;
 import ru.croc.chromenative.service.CommunicateService;
 import ru.croc.chromenative.service.MapperService;
+import ru.croc.chromenative.util.StringUtils;
 
 import java.io.IOException;
 import java.util.logging.FileHandler;
@@ -45,7 +46,7 @@ public class HostApplication {
             getInstance().run();
             System.exit(0);
         }catch (Exception e){
-            getLOGGER().log(Level.INFO, e.getMessage());
+            log(e.getMessage());
         }
     }
 
@@ -53,9 +54,7 @@ public class HostApplication {
         boolean stop = false;
         for(;;) {
             String requestJson = CommunicateService.getInstance().readMessage(System.in);
-            //Для тестирования. В последствие удалить
-//            String requestJson = "{\"method\":\"swingTestApplet\",\"data\":\"java\"}";
-            getLOGGER().log(Level.INFO, "Request JSON: " + requestJson);
+            log("Request JSON: " + requestJson);
             ObjectMapper mapper = MapperService.getInstance().getMapper();
             NativeRequest request = mapper.readValue(requestJson, NativeRequest.class);
             new Thread(new Job(request)).start();
@@ -72,5 +71,9 @@ public class HostApplication {
         logger.addHandler(fileHandler);
         logger.setUseParentHandlers(false);
         return logger;
+    }
+
+    public static void log(String message){
+        getLOGGER().log(Level.INFO, message);
     }
 }

@@ -3,7 +3,7 @@ package ru.croc.chromenative.dto;
 /**
  *
  */
-public class PrintAttachmentResult {
+public class PrintResult {
 
     private String status;
 
@@ -25,10 +25,10 @@ public class PrintAttachmentResult {
         this.message = message;
     }
 
-    public PrintAttachmentResult() {
+    public PrintResult() {
     }
 
-    public PrintAttachmentResult(String status, String message) {
+    public PrintResult(String status, String message) {
         this.status = status;
         this.message = message;
     }

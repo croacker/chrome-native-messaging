@@ -1,6 +1,9 @@
 package com.croc.documentum.print;
 
 import ru.croc.chromenative.HostApplication;
+import ru.croc.chromenative.dto.PrintResult;
+import ru.croc.chromenative.service.MapperService;
+import ru.croc.chromenative.util.StringUtils;
 
 import javax.print.Doc;
 import javax.print.DocFlavor;
@@ -18,99 +21,174 @@ import javax.print.attribute.standard.OrientationRequested;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
 
 /**
- *Конверсия:
- * <APPLET
- id="printApplet"
- CODE="com.croc.documentum.print.PrintApplet"
- ARCHIVE="/uht/_0/1bk3vhj10-dvoo/applets/scan/scan.jar"
- CODEBASE="/uht/applets/scan"
- width="1px"
- height="1px"
- MAYSCRIPT>
- <param name="printurl" value="/uht/barcodegen?documentId=0900029a808d4eb8"/>
- </APPLET>
+ * Конверсия: <APPLET id="printApplet" CODE="com.croc.documentum.print.PrintApplet"
+ * ARCHIVE="/uht/_0/1bk3vhj10-dvoo/applets/scan/scan.jar" CODEBASE="/uht/applets/scan" width="1px" height="1px"
+ * MAYSCRIPT> <param name="printurl" value="/uht/barcodegen?documentId=0900029a808d4eb8"/> </APPLET>
  */
-public class BarcodeApplet implements IMethod{
+public class BarcodeApplet extends AbstractMethod {
 
-    String printUrl;
+    /**
+     * Параметры печати.
+     */
+    private static class Printable {
+        private static final float X = 0f;
+
+        private static final float Y = 0f;
+
+        private static final float WIDTH = 50f;
+
+        private static final float HEIGHT = 40f;
+    }
+
+    /**
+     * Расположение диалога выбора принтера.
+     */
+    private static class DialogLocation {
+        public static final int X = 200;
+        public static final int Y = 200;
+    }
+
     public Doc doc;
-    DocPrintJob printerJob;
-    private PrintRequestAttributeSet printRequestAttributeSet;
 
-    private String data;
+    private DocPrintJob printerJob;
 
-    @Override
-    public void init(String data) {
-        this.data = data;
+    private HashPrintRequestAttributeSet printRequestAttributeSet;
+
+    public static void main(String[] args) {
+        BarcodeApplet barcodeApplet = new BarcodeApplet();
+        barcodeApplet.init("http://127.0.0.1:8082/dev/barcodegen?documentId=09029a76804e268c");
+        System.out.println(barcodeApplet.getResult());
     }
 
     @Override
     public String getResult() {
-        return null;
-    }
-
-    void print() {
-        prep();
-        if (printerJob != null) {
-            System.out.println("Printer Name : " + printerJob.getPrintService());
-            try {
-                printerJob.print(doc, printRequestAttributeSet);
-            } catch (final PrintException e) {
-                HostApplication.getLOGGER().log(Level.INFO, e.getMessage());
-            }
-//            System.out.println("Done Printing.");
-//            win.eval("printFinish();");
-        } else {
-//            win.eval("printCanceled();");
-        }
-
-    }
-
-    void prep() {
-        URL url = null;
-        printRequestAttributeSet = new HashPrintRequestAttributeSet();
-        // printRequestAttributeSet.add(MediaSizeName.ISO_A4);
-        final float printableWidth = 50f;
-        final float printableHeight = 40f;
-        printRequestAttributeSet.add(new MediaPrintableArea(0f, 0f, printableWidth, printableHeight, MediaPrintableArea.MM));
-        printRequestAttributeSet.add(new Copies(1));
-        printRequestAttributeSet.add(OrientationRequested.PORTRAIT);
-
+        PrintResult result;
         try {
-            url = new URL(printUrl);
-        } catch (final MalformedURLException e) {
-            e.printStackTrace();
+            result = print();
+        } catch (Exception e) {
+            HostApplication.log(e.getMessage());
+            result = getError(e.getMessage());
         }
+        return MapperService.getInstance().toString(result);
+    }
 
-        PrintService pservices = PrintServiceLookup.lookupDefaultPrintService();
-        System.out.println(pservices.getName());
-
-        DocFlavor flavor = javax.print.DocFlavor.INPUT_STREAM.JPEG;
-        PrintRequestAttributeSet attr_set = new HashPrintRequestAttributeSet();
-        attr_set.add(new Copies(1));
-        PrintService[] services = PrintServiceLookup.lookupPrintServices(flavor, attr_set);
-        PrintService service = pservices;
-        if (services != null && services.length > 1) {
-            final int dialogLocationX = 200;
-            final int dialogLocationY = 200;
-            service = ServiceUI.printDialog(null, dialogLocationX, dialogLocationY, services, pservices, flavor, printRequestAttributeSet);
+    /**
+     * Выбрать принтер и напечатать.
+     * @return
+     */
+    private PrintResult print() {
+        PrintResult result;
+        prepare();
+        if (printerJob != null) {
+            HostApplication.log("Printer Name : " + printerJob.getPrintService());
+            result = printDocument();
+            HostApplication.log("Done Printing.");
+        } else {
+            result = getError("printCanceled");//Отменено пользователем, на этапе выбора принтера в диалоге
         }
+        return result;
+    }
 
+    /**
+     * Печать документа.
+     */
+    private PrintResult printDocument(){
+        PrintResult result;
+        try {
+            printerJob.print(doc, printRequestAttributeSet);
+            result = getSuccess(StringUtils.EMPTY);
+        } catch (final PrintException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        return result;
+    }
+
+    /**
+     * Подготовить окужение.
+     */
+    void prepare() {
+        initHashPrintRequestAttributeSet();
+        PrintService service = selectPrintService();
         if (service != null) {
-            doc = new SimpleDoc(url, javax.print.DocFlavor.URL.JPEG, null);
+            doc = new SimpleDoc(getUrl(), javax.print.DocFlavor.URL.JPEG, null);
             try {
-                System.out.println("DOC : \n " + doc.getPrintData());
+                HostApplication.log("DOC : \n " + doc.getPrintData());
             } catch (final IOException e) {
-                e.printStackTrace();
+                HostApplication.log(e.getMessage());
             }
             printerJob = service.createPrintJob();
         }
-
     }
 
+    /**
+     * Иницализировать параметры печати
+     * @return
+     */
+    private HashPrintRequestAttributeSet initHashPrintRequestAttributeSet() {
+        printRequestAttributeSet = new HashPrintRequestAttributeSet();
+        printRequestAttributeSet.add(new MediaPrintableArea(Printable.X,
+                Printable.Y,
+                Printable.WIDTH,
+                Printable.HEIGHT,
+                MediaPrintableArea.MM));
+        printRequestAttributeSet.add(new Copies(1));
+        printRequestAttributeSet.add(OrientationRequested.PORTRAIT);
+        return printRequestAttributeSet;
+    }
 
+    /**
+     * Выбрать принтер для печати.
+     * @return принтер
+     */
+    private PrintService selectPrintService(){
+        PrintService defaultService = PrintServiceLookup.lookupDefaultPrintService();
+        return showPrintDialog(defaultService);
+    }
+
+    /**
+     * Получить список принтеров.
+     * @return
+     */
+    private PrintService[] getAllPrintServices(){
+        PrintRequestAttributeSet attr_set = new HashPrintRequestAttributeSet();
+        attr_set.add(new Copies(1));
+        return PrintServiceLookup.lookupPrintServices(DocFlavor.INPUT_STREAM.JPEG, attr_set);
+    }
+
+    /**
+     * Отобразить диалог выбора принтера.
+     * @param defaultService принтер поумолчанию
+     * @return
+     */
+    private PrintService showPrintDialog(PrintService defaultService){
+        PrintService service = defaultService;
+        PrintService[] services = getAllPrintServices();
+        if (services != null && services.length > 1) {
+            service = ServiceUI.printDialog(null,
+                    DialogLocation.X,
+                    DialogLocation.Y,
+                    services,
+                    defaultService,
+                    DocFlavor.INPUT_STREAM.JPEG,
+                    printRequestAttributeSet);
+        }
+        return service;
+    }
+
+    /**
+     * URL по которому можно получить ШК
+     * @return
+     */
+    private URL getUrl() {
+        URL url;
+        try {
+            url = new URL(getData());
+        } catch (final MalformedURLException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        return url;
+    }
 
 }

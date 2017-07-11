@@ -1,7 +1,6 @@
 package ru.croc.chromenative.service.applets;
 
 import com.croc.documentum.print.BarcodeApplet;
-import com.croc.documentum.print.PrintApplet;
 import com.croc.documentum.print.PrintAttachmentListApplet;
 import com.croc.documentum.print.SwingTestApplet;
 import com.croc.documentum.print.SystemInfoApplet;
