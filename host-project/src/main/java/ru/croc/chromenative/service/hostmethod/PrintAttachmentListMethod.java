@@ -30,40 +30,38 @@ import ru.croc.chromenative.service.MapperService;
 import ru.croc.chromenative.util.StringUtils;
 
 /**
- *Конверсия:
- * <APPLET
- id="printApplet"
- CODE="com.croc.documentum.applet.PrintAttachmentListApplet"
- ARCHIVE="/uht/_0/1bk3vhj10-9se/applets/print/print.jar"
- CODEBASE="/uht/applets/print"
- width="1px"
- height="1px"
- MAYSCRIPT>
- <param name="printurl" value="/uht/attachmentcontenttransfer?objectId=0900029a80864154"/>
- </APPLET>
+ * Метод печати вложений. Конверсия: <APPLET id="printApplet"
+ * CODE="com.croc.documentum.applet.PrintAttachmentListApplet" ARCHIVE="/uht/_0/1bk3vhj10-9se/applets/print/print.jar"
+ * CODEBASE="/uht/applets/print" width="1px" height="1px" MAYSCRIPT>
+ * <param name="printurl" value="/uht/attachmentcontenttransfer?objectId=0900029a80864154"/> </APPLET>
+ *
+ * @author agumenyuk
+ * @since 01.07.2016 17:01
  */
-public class PrintAttachmentListMethod extends AbstractMethod{
+public class PrintAttachmentListMethod extends AbstractMethod {
+
+    /**
+     * Список временных файлов, полученных для печати от сервлета приложения КСЭД.
+     */
+    protected List<File> tempFileList;
 
     @Override
     public String getResult() {
         PrintResult result;
         try {
             result = print();
-        }catch (Exception e){
+        } catch (Exception e) {
             HostApplication.log(e.getMessage());
             result = getError(e.getMessage());
         }
         return MapperService.getInstance().toString(result);
     }
 
-    protected List<File> tempFileList;
-
-    public static void main(String[] args) {
-        PrintAttachmentListMethod printAttachmentListMethod = new PrintAttachmentListMethod();
-        printAttachmentListMethod.init("http://127.0.0.1:8082/dev/attachmentcontenttransfer?objectId=09029a768044e838");
-        printAttachmentListMethod.getResult();
-    }
-
+    /**
+     * Распечатать файлы на принтер поумолчанию, предварительно запросив файлы по http у сервлета приложения КСЭД.
+     * 
+     * @return результат печати.
+     */
     protected PrintResult print() {
         PrintResult result;
         try {
@@ -81,10 +79,24 @@ public class PrintAttachmentListMethod extends AbstractMethod{
         return result;
     }
 
+    /**
+     * Печать файла
+     * 
+     * @param file
+     *            файл
+     * @throws Exception
+     */
     protected void printFile(final File file) throws Exception {
         printFileViaDesktop(file);
     }
 
+    /**
+     * Печать pdf "напрямую"
+     * 
+     * @param file
+     *            файл
+     * @return
+     */
     protected boolean printPDFDirectly(final File file) {
         PrintService defaultPrintService = PrintServiceLookup.lookupDefaultPrintService();
         DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;
@@ -114,6 +126,13 @@ public class PrintAttachmentListMethod extends AbstractMethod{
         return true;
     }
 
+    /**
+     * Печать файла на принтер поумолчанию.
+     * 
+     * @param file
+     *            файл для печати
+     * @throws Exception
+     */
     protected void printFileViaDesktop(final File file) throws Exception {
         try {
             Desktop.getDesktop().print(file);
@@ -139,6 +158,14 @@ public class PrintAttachmentListMethod extends AbstractMethod{
         }
     }
 
+    /**
+     * Получить по http файлы у сервлета приложения КСЭД.
+     * 
+     * @param attachmentURL
+     *            url сервлета с необходимыми параметрами
+     * @return список полученных файлов
+     * @throws Exception
+     */
     protected List<File> downloadAndUnzip(final String attachmentURL) throws Exception {
         List<File> result = new ArrayList<>();
         InputStream urlStream = null;
@@ -180,6 +207,16 @@ public class PrintAttachmentListMethod extends AbstractMethod{
         return result;
     }
 
+    /**
+     * Создать временный файл.
+     * 
+     * @param entryName
+     *            наименование
+     * @param zippedStream
+     *            поток
+     * @return временный файл
+     * @throws Exception
+     */
     protected File createTempFileFromZippedStream(final String entryName, final ZipInputStream zippedStream)
             throws Exception {
         String invalidCharRemoved = entryName.replaceAll("[\\\\/:*?\"<>|]", "-");
@@ -190,6 +227,13 @@ public class PrintAttachmentListMethod extends AbstractMethod{
         return file;
     }
 
+    /**
+     * Копировать поток
+     * 
+     * @param source
+     * @param dest
+     * @throws Exception
+     */
     protected void copyStream(final InputStream source, final OutputStream dest) throws Exception {
         final int initialCapacity = 1024;
         byte data[] = new byte[initialCapacity];
@@ -199,6 +243,13 @@ public class PrintAttachmentListMethod extends AbstractMethod{
         }
     }
 
+    /**
+     * Определение, что файл pdf.
+     * 
+     * @param file
+     *            файл
+     * @return
+     */
     protected boolean isPDF(final File file) {
         String fileName = file.getAbsolutePath();
         String extension = "";
@@ -209,10 +260,15 @@ public class PrintAttachmentListMethod extends AbstractMethod{
         return extension.equalsIgnoreCase("pdf");
     }
 
+    /**
+     * Получить url из строки.
+     * 
+     * @return url
+     */
     public URL getDocumentBase() {
         URL url;
         try {
-             url = new URL(getData());
+            url = new URL(getData());
         } catch (MalformedURLException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

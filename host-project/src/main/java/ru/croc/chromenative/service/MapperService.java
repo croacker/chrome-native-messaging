@@ -10,6 +10,9 @@ import java.util.logging.Level;
 
 /**
  * Сервис трансляции json в объекты и обратно.
+ *
+ * @author agumenyuk
+ * @since 01.07.2016 17:01
  */
 public class MapperService {
 
@@ -19,7 +22,7 @@ public class MapperService {
     private static MapperService instance;
 
     public static MapperService getInstance() {
-        if(instance == null){
+        if (instance == null) {
             instance = new MapperService();
         }
         return instance;
@@ -27,9 +30,10 @@ public class MapperService {
 
     /**
      * Подготовленный объект для трансляции объекта в json либо обратно.
+     * 
      * @return
      */
-    public ObjectMapper getMapper(){
+    public ObjectMapper getMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
         return mapper;
@@ -37,10 +41,11 @@ public class MapperService {
 
     /**
      * Объект в json-строку.
+     * 
      * @param obj
      * @return
      */
-    public String toString(Object obj){
+    public String toString(Object obj) {
         StringWriter stringWriter = new StringWriter();
         try {
             getMapper().writeValue(stringWriter, obj);

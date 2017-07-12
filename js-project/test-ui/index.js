@@ -1,24 +1,7 @@
-var extId = 'bmfbcejdknlknpncfpeloejonjoledha';
-var application = 'com.croc.external_app';
-
-function connectToExtension() {
-  port = chrome.runtime.connect(application);
-
-  port.onMessage.addListener(log);
-
-  port.onDisconnect.addListener(function (e) {
-    log('unexpected disconnect');
-
-    port = null;
-  });
-}
-
-function sendMessageToExtension() {
-  chrome.runtime.sendMessage(extId, { greeting: "hello", andgretting: 'andgoos' }, function (response) {
-    console.log(response);
-  });
-}
-
+/**
+ * Добвить сообщение в вывод.
+ * @param msg сообщение в виде строки
+ */
 function log(msg) {
   console.log(msg);
   var nativeResponse = document.getElementById('native-response');
@@ -27,6 +10,10 @@ function log(msg) {
   nativeResponse.appendChild(li);
 }
 
+/**
+ * Подписаться на событие Browser extension.
+ * @param eventName наименование события
+ */
 function subscribeToExtensionEvent(eventName) {
   window.top.addEventListener(eventName, function (event) {
     console.log('receive EVENT:' + eventName);
@@ -34,13 +21,20 @@ function subscribeToExtensionEvent(eventName) {
   });
 }
 
+/**
+ * Отправить сообщение Browser extension.
+ * @param eventName
+ * @param detail
+ */
 function sendMessageToExtension(eventName, detail) {
   var event = new CustomEvent(eventName, { detail: detail });
   window.top.dispatchEvent(event);
 }
 
+/**
+ * Зарегистрировать события нажатия на кнопках.
+ */
 document.addEventListener('DOMContentLoaded', function () {
-
   document.getElementById('jreinfo-button').addEventListener('click', function () {
     subscribeToExtensionEvent('extensionResponseSystemInfo');
     sendMessageToExtension('tnGetSystemInfo', { method: 'getSystemInfo', data: 'jre' });
@@ -67,5 +61,4 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('Not specified barcode URL!');
     }
   });
-
 });

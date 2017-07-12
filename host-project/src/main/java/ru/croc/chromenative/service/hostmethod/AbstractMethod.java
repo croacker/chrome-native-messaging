@@ -3,7 +3,10 @@ package ru.croc.chromenative.service.hostmethod;
 import ru.croc.chromenative.dto.PrintResult;
 
 /**
- * Некоторый абстрактный метод хоста
+ * Некоторый абстрактный метод хоста.
+ * 
+ * @author agumenyuk
+ * @since 01.07.2016 17:01
  */
 public abstract class AbstractMethod implements IMethod {
 
@@ -25,11 +28,25 @@ public abstract class AbstractMethod implements IMethod {
         this.data = data;
     }
 
-    protected PrintResult getError(String message){
+    /**
+     * Получить результат-ошибка.
+     * 
+     * @param message
+     *            сообщение для передачи в результат
+     * @return Объект-результат выполнения.
+     */
+    protected PrintResult getError(String message) {
         return new PrintResult(ResultStatus.ERROR.getName(), message);
     }
 
-    protected PrintResult getSuccess(String message){
+    /**
+     * Получить результат-успех.
+     * 
+     * @param message
+     *            сообщение для передачи в результат
+     * @return Объект-результат выполнения.
+     */
+    protected PrintResult getSuccess(String message) {
         return new PrintResult(ResultStatus.SUCCESS.getName(), message);
     }
 }

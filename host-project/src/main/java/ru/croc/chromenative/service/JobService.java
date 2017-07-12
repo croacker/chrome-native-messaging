@@ -9,6 +9,9 @@ import java.util.concurrent.Future;
 
 /**
  * Сервис для запуска задач в отдельных потоках.
+ *
+ * @author agumenyuk
+ * @since 01.07.2016 17:01
  */
 public class JobService {
 
@@ -25,36 +28,38 @@ public class JobService {
     private ExecutorService executorService;
 
     public static JobService getInstance() {
-        if (instance == null){
+        if (instance == null) {
             instance = new JobService();
         }
         return instance;
     }
 
-    private JobService(){
+    private JobService() {
         init();
     }
 
     /**
      * Инициализация сервиса.
      */
-    private void init(){
+    private void init() {
         executorService = Executors.newFixedThreadPool(THREAD_COUNT);
     }
 
     /**
      * Выполшнить запрос в отдельном потоке.
-     * @param request запрос от Browser extension
+     * 
+     * @param request
+     *            запрос от Browser extension
      */
-    public Future<String> submit(NativeRequest request){
+    public Future<String> submit(NativeRequest request) {
         return executorService.submit(new Job(request));
     }
 
     /**
      * Завершить работу.
      */
-    public void shutdownNow(){
-        if(executorService != null) {
+    public void shutdownNow() {
+        if (executorService != null) {
             executorService.shutdownNow();
         }
     }

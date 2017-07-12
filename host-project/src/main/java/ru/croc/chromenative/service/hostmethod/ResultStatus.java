@@ -2,17 +2,30 @@ package ru.croc.chromenative.service.hostmethod;
 
 /**
  * Результирующий статус выполнения метода.
+ *
+ * @author agumenyuk
+ * @since 01.07.2016 17:01
  */
 public enum ResultStatus {
-    SUCCESS("success"), ERROR("error");
+    /**
+     * Успех.
+     */
+    SUCCESS("success"),
+    /**
+     * Ошибка
+     */
+    ERROR("error");
 
-    private final String success;
+    /**
+     * Наименование результата.
+     */
+    private final String name;
 
     public String getName() {
-        return success;
+        return name;
     }
 
-    ResultStatus(String success) {
-        this.success = success;
+    ResultStatus(String name) {
+        this.name = name;
     }
 }

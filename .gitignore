@@ -50,3 +50,7 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+### Log files ###
+log.txt
+log.txtv

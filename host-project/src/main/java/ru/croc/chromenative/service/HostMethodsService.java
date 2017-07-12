@@ -4,7 +4,8 @@ import ru.croc.chromenative.dto.NativeRequest;
 import ru.croc.chromenative.service.hostmethod.IMethod;
 
 /**
- * Created by agumenyuk on 28.06.2017.
+ * @author agumenyuk
+ * @since 01.07.2016 17:01
  */
 public class HostMethodsService {
 
@@ -14,13 +15,18 @@ public class HostMethodsService {
     private static HostMethodsService instance;
 
     public static HostMethodsService getInstance() {
-        if (instance == null){
+        if (instance == null) {
             instance = new HostMethodsService();
         }
         return instance;
     }
 
-    public String execute(NativeRequest request){
+    /**
+     * Выполнить метод приложения.
+     * @param request запрос от Browser extension
+     * @return
+     */
+    public String execute(NativeRequest request) {
         IMethod method = BeanService.getInstance().getMethod(request);
         method.init(request.getData());
         return method.getResult();
