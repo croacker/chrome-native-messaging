@@ -12,6 +12,10 @@ public enum ResultStatus {
      */
     SUCCESS("success"),
     /**
+     * Остановка приложения.
+     */
+    SHUTDOWN("shutdown"),
+    /**
      * Ошибка
      */
     ERROR("error");

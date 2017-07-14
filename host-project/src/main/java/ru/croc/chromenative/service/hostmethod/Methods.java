@@ -13,6 +13,10 @@ public enum Methods {
      */
     GET_VERSION("getVersion", ApplicationVersion.class),
     /**
+     * Метод останавливающий приложение.
+     */
+    SHUTDOWN("shutdown", ShutdownApplication.class),
+    /**
      * Получить информацию о системе, в частности версию JRE.
      */
     SYSTEM_INFO_METHOD("getSystemInfo", SystemInfoMethod.class),

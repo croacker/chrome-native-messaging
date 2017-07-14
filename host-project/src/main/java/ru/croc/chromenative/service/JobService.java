@@ -58,6 +58,15 @@ public class JobService {
     /**
      * Завершить работу.
      */
+    public void shutdown() {
+        if (executorService != null) {
+            executorService.shutdown();
+        }
+    }
+
+    /**
+     * Завершить работу немедленно.
+     */
     public void shutdownNow() {
         if (executorService != null) {
             executorService.shutdownNow();
