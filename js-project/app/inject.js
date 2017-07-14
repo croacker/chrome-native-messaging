@@ -47,6 +47,19 @@ var ulResponse;
         },
 
         /**
+         * Отправить событие о завершении работы Native application
+         */
+        shutdownPocessResponse: function (response) {
+            var extensionResponseVersio = new CustomEvent('extensionResponseShutdown', {
+                detail: {
+                    method: 'extensionResponseShutdown',
+                    data: response.data
+                }
+            });
+            extensionEventBus.dispatchEvent(extensionResponseVersio);
+        },
+
+        /**
          * Отправить событие о получении версии JRE
          */
         getSystemInfoPocessResponse: function (response) {
@@ -123,6 +136,7 @@ function subscribeToApplicationEvents(ksedEventBus) {
     }
 
     extensionEventBus.addEventListener('tnGetVersion', eventProcessor.onTnGetVersion);
+    extensionEventBus.addEventListener('tnShutdown', eventProcessor.onTnShutdown);
     extensionEventBus.addEventListener('tnGetSystemInfo', eventProcessor.onTnGetSystemInfo);
     extensionEventBus.addEventListener('tnPrintAttachments', eventProcessor.onTnPrintAttachments);
     extensionEventBus.addEventListener('tnPrintBarcode', eventProcessor.onTnPrintBarcode);
@@ -206,6 +220,14 @@ function EventProcessor(){
      * Приложение выполнило запрос версии Native application
      */
     this.onTnGetVersion = function (event) {
+        var request = me.getRequest(event.detail);
+        sendMessageToBackgroundJs(request);
+    };
+
+    /**
+     * Приложение выполнило запрос остановки Native application
+     */
+    this.onTnShutdown = function (event) {
         var request = me.getRequest(event.detail);
         sendMessageToBackgroundJs(request);
     };

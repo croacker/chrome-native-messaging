@@ -66,4 +66,9 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('Not specified barcode URL!');
     }
   });
+
+  document.getElementById('shutdown-button').addEventListener('click', function () {
+    subscribeToExtensionEvent('extensionResponseShutdown');
+    sendMessageToExtension('tnShutdown', { method: 'shutdown', data: 'jre' });
+  });
 });

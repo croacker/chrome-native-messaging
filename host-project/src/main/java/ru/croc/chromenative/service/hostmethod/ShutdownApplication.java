@@ -1,5 +1,6 @@
 package ru.croc.chromenative.service.hostmethod;
 
+import ru.croc.chromenative.ApplicationManager;
 import ru.croc.chromenative.service.JobService;
 
 /**
@@ -17,7 +18,7 @@ public class ShutdownApplication implements IMethod {
 
     @Override
     public String getResult() {
-        JobService.getInstance().shutdown();
+        ApplicationManager.getInstance().shutdown();
         return ResultStatus.SHUTDOWN.getName();
     }
 }
