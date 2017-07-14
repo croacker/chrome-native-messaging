@@ -16,6 +16,6 @@ exit /b
 
 :run
 
-reg add HKLM\SOFTWARE\Google\Chrome\NativeMessagingHosts\com.croc.external_app /f /ve /t REG_SZ /d %~dp0com.croc.external_app-win.json
+reg add HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\com.croc.external_app /f /ve /t REG_SZ /d "%~dp0com.croc.external_app-win.json"
 
 pause
