@@ -34,7 +34,20 @@ var ulResponse;
     transoilBrowserExtension = {
         version: '0.0.1',
         /**
-         * Обновить значение версия JRE
+         * Отправить событие о получении версии Native application
+         */
+        getVersionPocessResponse: function (response) {
+            var extensionResponseVersio = new CustomEvent('extensionResponseVersion', {
+                detail: {
+                    method: 'extensionResponseVersion',
+                    data: response.data
+                }
+            });
+            extensionEventBus.dispatchEvent(extensionResponseVersio);
+        },
+
+        /**
+         * Отправить событие о получении версии JRE
          */
         getSystemInfoPocessResponse: function (response) {
             var extensionResponseSystemInfo = new CustomEvent('extensionResponseSystemInfo', {
@@ -109,10 +122,9 @@ function subscribeToApplicationEvents(ksedEventBus) {
         extensionEventBus = new ExtensionEventBus(window.top);
     }
 
+    extensionEventBus.addEventListener('tnGetVersion', eventProcessor.onTnGetVersion);
     extensionEventBus.addEventListener('tnGetSystemInfo', eventProcessor.onTnGetSystemInfo);
-
     extensionEventBus.addEventListener('tnPrintAttachments', eventProcessor.onTnPrintAttachments);
-
     extensionEventBus.addEventListener('tnPrintBarcode', eventProcessor.onTnPrintBarcode);
 }
 
@@ -189,6 +201,14 @@ function ExtensionEventBus(ksedEventBus) {
  */
 function EventProcessor(){
     var me = this;
+
+    /**
+     * Приложение выполнило запрос версии Native application
+     */
+    this.onTnGetVersion = function (event) {
+        var request = me.getRequest(event.detail);
+        sendMessageToBackgroundJs(request);
+    };
 
     /**
      * Приложение выполнило запрос системной информации, в частности версии jre

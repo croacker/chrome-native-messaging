@@ -35,6 +35,11 @@ function sendMessageToExtension(eventName, detail) {
  * Зарегистрировать события нажатия на кнопках.
  */
 document.addEventListener('DOMContentLoaded', function () {
+  document.getElementById('version-button').addEventListener('click', function () {
+    subscribeToExtensionEvent('extensionResponseVersion');
+    sendMessageToExtension('tnGetVersion', { method: 'getVersion', data: 'jre' });
+  });
+
   document.getElementById('jreinfo-button').addEventListener('click', function () {
     subscribeToExtensionEvent('extensionResponseSystemInfo');
     sendMessageToExtension('tnGetSystemInfo', { method: 'getSystemInfo', data: 'jre' });
