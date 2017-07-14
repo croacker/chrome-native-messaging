@@ -7,6 +7,11 @@ package ru.croc.chromenative.service.hostmethod;
  * @since 01.07.2016 17:01
  */
 public enum Methods {
+
+    /**
+     * Версия приложения
+     */
+    GET_VERSION("getVersion", ApplicationVersion.class),
     /**
      * Получить информацию о системе, в частности версию JRE.
      */

@@ -21,6 +21,11 @@ import ru.croc.chromenative.service.MapperService;
 public class HostApplication {
 
     /**
+     * Версия.
+     */
+    public static final String VERSION = "0.0.1";
+
+    /**
      * Объект для журналирования.
      */
     private static Logger LOGGER;
