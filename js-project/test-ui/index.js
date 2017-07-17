@@ -36,39 +36,47 @@ function sendMessageToExtension(eventName, detail) {
  */
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('version-button').addEventListener('click', function () {
-    subscribeToExtensionEvent('extensionResponseVersion');
     sendMessageToExtension('tnGetVersion', { method: 'getVersion', data: 'hostApp' });
   });
 
   document.getElementById('jreinfo-button').addEventListener('click', function () {
-    subscribeToExtensionEvent('extensionResponseSystemInfo');
     sendMessageToExtension('tnGetSystemInfo', { method: 'getSystemInfo', data: 'jre' });
   });
 
   var servletUrl = document.getElementById('printdocs-url');
   document.getElementById('printdocs-button').addEventListener('click', function () {
     if (servletUrl.value) {
-      subscribeToExtensionEvent('extensionResponsePrintAttachments');
       sendMessageToExtension('tnPrintAttachments', { method: 'printAttachments', data: servletUrl.value });
       log(servletUrl.value);
     }else{
-      console.log('Not specified print attachments URL!');
+      log('Not specified print attachments URL!');
     }
   });
 
   var barcodeUrl = document.getElementById('printbarcode-url');
   document.getElementById('printbarcode-button').addEventListener('click', function () {
     if (barcodeUrl.value) {
-      subscribeToExtensionEvent('extensionResponsePrintBarcode');
       sendMessageToExtension('tnPrintBarcode', { method: 'printBarcode', data: barcodeUrl.value });
       log(barcodeUrl.value);
     }else{
-      console.log('Not specified barcode URL!');
+      log('Not specified barcode URL!');
     }
   });
 
   document.getElementById('shutdown-button').addEventListener('click', function () {
-    subscribeToExtensionEvent('extensionResponseShutdown');
     sendMessageToExtension('tnShutdown', { method: 'shutdown', data: 'hostApp' });
   });
+
+  subscribeToResponseEvents();
 });
+
+/**
+ * Подписаться на необходимые события.
+ */
+function subscribeToResponseEvents(){
+  subscribeToExtensionEvent('extensionResponseVersion');
+  subscribeToExtensionEvent('extensionResponseSystemInfo');
+  subscribeToExtensionEvent('extensionResponsePrintAttachments');
+  subscribeToExtensionEvent('extensionResponsePrintBarcode');
+  subscribeToExtensionEvent('extensionResponseShutdown');
+}
