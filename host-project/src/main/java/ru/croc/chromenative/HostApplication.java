@@ -3,7 +3,10 @@ package ru.croc.chromenative;
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -111,11 +114,12 @@ public class HostApplication {
      * @throws IOException
      */
     private static Logger initLogger() throws IOException {
-        Logger logger = Logger.getLogger(HostApplication.class.getName());
-        FileHandler fileHandler = new FileHandler(LOG_FILENAME);
-        fileHandler.setLevel(Level.ALL);
-        logger.addHandler(fileHandler);
-        logger.setUseParentHandlers(false);
+//        Logger logger = Logger.getLogger(HostApplication.class.getName());
+//        FileHandler fileHandler = new FileHandler(LOG_FILENAME);
+//        fileHandler.setLevel(Level.ALL);
+//        logger.addHandler(fileHandler);
+//        logger.setUseParentHandlers(false);
+        Logger logger = LogManager.getLogger(HostApplication.class.getName());
         return logger;
     }
 
@@ -124,6 +128,15 @@ public class HostApplication {
      * @param message
      */
     public static void log(String message) {
-        getLOGGER().log(Level.INFO, message);
+        getLOGGER().info(message);
     }
+
+    public static void error(String message) {
+        getLOGGER().error(message);
+    }
+
+    public static void error(Throwable e) {
+        getLOGGER().error(e.getMessage(), e);
+    }
+
 }

@@ -51,7 +51,7 @@ public class PrintAttachmentListMethod extends AbstractMethod {
         try {
             result = print();
         } catch (Exception e) {
-            HostApplication.log(e.getMessage());
+            HostApplication.error(e);
             result = getError(e.getMessage());
         }
         return MapperService.getInstance().toString(result);
@@ -184,8 +184,8 @@ public class PrintAttachmentListMethod extends AbstractMethod {
             }
         } catch (final Throwable e) {
             String message = "Exception when downloading and uzipping files form " + attachmentURL;
-            HostApplication.log(message);
-            HostApplication.log(e.getMessage());
+            HostApplication.error(message);
+            HostApplication.error(e);
             throw new Exception(message, e);
         } finally {
             try {
@@ -199,8 +199,8 @@ public class PrintAttachmentListMethod extends AbstractMethod {
                 }
             } catch (final Throwable e) {
                 String message = "Exception when closing streams form " + attachmentURL;
-                HostApplication.log(message);
-                HostApplication.log(e.getMessage());
+                HostApplication.error(message);
+                HostApplication.error(e);
                 throw new Exception(message, e);
             }
         }

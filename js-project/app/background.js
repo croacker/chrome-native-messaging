@@ -112,20 +112,6 @@ chrome.runtime.onMessageExternal.addListener(
     });
 
 /**
- * Ф-я определяющая необходимость внедрения
- * @param {*} tabId 
- * @param {*} changeInfo 
- * @param {*} tab 
- */
-function needInject(tabId, changeInfo, tab) {
-    var result = false;
-    if (changeInfo.status == 'complete') {
-        result = true;
-    }
-    return result;
-}
-
-/**
  * Класс для хранения информации о закладке приложения СЭД
  * @param {*} tabId 
  * @param {*} changeInfo 
@@ -171,4 +157,28 @@ function NativeRequest(config) {
     }
 
     return this;
+}
+
+/**
+ * Проверка на undefined
+ * @param {*} variable 
+ */
+function isUndefined(variable){
+    return 'undefined' === typeof variable;
+}
+
+/**
+ * Ф-я определяющая необходимость внедрения
+ * @param {*} tabId 
+ * @param {*} changeInfo 
+ * @param {*} tab 
+ */
+function needInject(tabId, changeInfo, tab) {
+    var result = false;
+    var url = tab.url;
+    if ((changeInfo.status == 'complete' || changeInfo.status == 'loading')
+          && !isUndefined(url) && url.indexOf("chrome:") == -1) {
+        result = true;
+    }
+    return result;
 }

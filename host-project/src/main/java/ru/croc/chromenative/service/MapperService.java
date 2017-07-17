@@ -1,12 +1,12 @@
 package ru.croc.chromenative.service;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ru.croc.chromenative.HostApplication;
-
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.logging.Level;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ru.croc.chromenative.HostApplication;
 
 /**
  * Сервис трансляции json в объекты и обратно.
@@ -50,7 +50,7 @@ public class MapperService {
         try {
             getMapper().writeValue(stringWriter, obj);
         } catch (IOException e) {
-            HostApplication.log(e.getMessage());
+            HostApplication.error(e);
             throw new RuntimeException(e.getMessage(), e);
         }
         return stringWriter.toString();
