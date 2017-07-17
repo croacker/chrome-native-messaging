@@ -1,27 +1,20 @@
 package ru.croc.chromenative.service.hostmethod;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import ru.croc.chromenative.dto.PrintResult;
+import ru.croc.chromenative.service.MapperService;
+import ru.croc.chromenative.util.StringUtils;
 
-import javax.print.Doc;
-import javax.print.DocFlavor;
-import javax.print.DocPrintJob;
-import javax.print.PrintException;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
-import javax.print.ServiceUI;
-import javax.print.SimpleDoc;
+import javax.print.*;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Copies;
 import javax.print.attribute.standard.MediaPrintableArea;
 import javax.print.attribute.standard.OrientationRequested;
-
-import ru.croc.chromenative.HostApplication;
-import ru.croc.chromenative.dto.PrintResult;
-import ru.croc.chromenative.service.MapperService;
-import ru.croc.chromenative.util.StringUtils;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Печать штрихкода, с выбором принтера для печати.
@@ -34,6 +27,11 @@ import ru.croc.chromenative.util.StringUtils;
  * @since 01.07.2016 17:01
  */
 public class PrintBarcodeMethod extends AbstractMethod {
+
+    /**
+     * Логгер
+     */
+    private static Logger log = LogManager.getLogger(PrintAttachmentListMethod.class);
 
     /**
      * Параметры печати.
@@ -80,7 +78,7 @@ public class PrintBarcodeMethod extends AbstractMethod {
         try {
             result = print();
         } catch (Exception e) {
-            HostApplication.error(e);
+            log.error(e);
             result = getError(e.getMessage());
         }
         return MapperService.getInstance().toString(result);
@@ -95,9 +93,9 @@ public class PrintBarcodeMethod extends AbstractMethod {
         PrintResult result;
         prepare();
         if (printerJob != null) {
-            HostApplication.log("Printer Name : " + printerJob.getPrintService());
+            log.info("Printer Name : " + printerJob.getPrintService());
             result = printDocument();
-            HostApplication.log("Done Printing.");
+            log.info("Done Printing.");
         } else {
             result = getError("printCanceled");// Отменено пользователем, на этапе выбора принтера в диалоге
         }
@@ -112,7 +110,7 @@ public class PrintBarcodeMethod extends AbstractMethod {
         try {
             printerJob.print(doc, printRequestAttributeSet);
             result = getSuccess(StringUtils.EMPTY);
-        } catch (final PrintException e) {
+        } catch (PrintException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
         return result;
@@ -127,9 +125,9 @@ public class PrintBarcodeMethod extends AbstractMethod {
         if (service != null) {
             doc = new SimpleDoc(getUrl(), javax.print.DocFlavor.URL.JPEG, null);
             try {
-                HostApplication.log("DOC : \n " + doc.getPrintData());
-            } catch (final IOException e) {
-                HostApplication.error(e);
+                log.info("DOC : \n " + doc.getPrintData());
+            } catch (IOException e) {
+                log.error(e);
             }
             printerJob = service.createPrintJob();
         }
@@ -204,7 +202,7 @@ public class PrintBarcodeMethod extends AbstractMethod {
         URL url;
         try {
             url = new URL(getData());
-        } catch (final MalformedURLException e) {
+        } catch (MalformedURLException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
         return url;

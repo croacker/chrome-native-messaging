@@ -2,7 +2,7 @@ package ru.croc.chromenative.dto;
 
 /**
  * Транслированный из json-запрос от Browser extension.
- * 
+ *
  * @author agumenyuk
  * @since 01.07.2016 17:01
  */
@@ -35,11 +35,6 @@ public class NativeRequest {
     }
 
     public NativeRequest() {
-    }
-
-    public NativeRequest(String method, String data) {
-        this.method = method;
-        this.data = data;
     }
 
 }

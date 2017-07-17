@@ -1,7 +1,6 @@
 package ru.croc.chromenative.service.hostmethod;
 
 import ru.croc.chromenative.ApplicationManager;
-import ru.croc.chromenative.service.JobService;
 
 /**
  * Метод останавливающий приложение.

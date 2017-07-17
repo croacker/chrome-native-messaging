@@ -1,33 +1,23 @@
 package ru.croc.chromenative.service.hostmethod;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import ru.croc.chromenative.HostApplication;
+import ru.croc.chromenative.dto.PrintResult;
+import ru.croc.chromenative.service.MapperService;
+import ru.croc.chromenative.util.StringUtils;
+
+import javax.print.*;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
 import java.awt.*;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import javax.print.Doc;
-import javax.print.DocFlavor;
-import javax.print.DocPrintJob;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
-import javax.print.SimpleDoc;
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
-
-import ru.croc.chromenative.HostApplication;
-import ru.croc.chromenative.dto.PrintResult;
-import ru.croc.chromenative.service.MapperService;
-import ru.croc.chromenative.util.StringUtils;
 
 /**
  * Метод печати вложений. Конверсия: <APPLET id="printApplet"
@@ -41,6 +31,11 @@ import ru.croc.chromenative.util.StringUtils;
 public class PrintAttachmentListMethod extends AbstractMethod {
 
     /**
+     * Логгер
+     */
+    private static Logger log = LogManager.getLogger(PrintAttachmentListMethod.class);
+
+    /**
      * Список временных файлов, полученных для печати от сервлета приложения КСЭД.
      */
     protected List<File> tempFileList;
@@ -51,7 +46,7 @@ public class PrintAttachmentListMethod extends AbstractMethod {
         try {
             result = print();
         } catch (Exception e) {
-            HostApplication.error(e);
+            log.error(e);
             result = getError(e.getMessage());
         }
         return MapperService.getInstance().toString(result);
@@ -68,12 +63,13 @@ public class PrintAttachmentListMethod extends AbstractMethod {
             String attachmentURL = getData();
             tempFileList = downloadAndUnzip(attachmentURL);
             for (File tempFile : tempFileList) {
-                HostApplication.log("PRINTING: " + tempFile.getAbsolutePath());
+                log.info("PRINTING: " + tempFile.getAbsolutePath());
                 printFile(tempFile);
-                HostApplication.log("FILE PRINTED: " + tempFile.getAbsolutePath());
+                log.info("FILE PRINTED: " + tempFile.getAbsolutePath());
             }
             result = getSuccess(StringUtils.EMPTY);
-        } catch (final Throwable e) {
+        } catch (Throwable e) {
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
         return result;
@@ -86,7 +82,7 @@ public class PrintAttachmentListMethod extends AbstractMethod {
      *            файл
      * @throws Exception
      */
-    protected void printFile(final File file) throws Exception {
+    protected void printFile(File file) throws Exception {
         printFileViaDesktop(file);
     }
 
@@ -97,7 +93,7 @@ public class PrintAttachmentListMethod extends AbstractMethod {
      *            файл
      * @return
      */
-    protected boolean printPDFDirectly(final File file) {
+    protected boolean printPDFDirectly(File file) {
         PrintService defaultPrintService = PrintServiceLookup.lookupDefaultPrintService();
         DocFlavor flavor = DocFlavor.INPUT_STREAM.AUTOSENSE;
         PrintRequestAttributeSet aset = new HashPrintRequestAttributeSet();
@@ -109,7 +105,8 @@ public class PrintAttachmentListMethod extends AbstractMethod {
             fileStream = new FileInputStream(file);
             doc = new SimpleDoc(fileStream, flavor, null);
             printerJob.print(doc, aset);
-        } catch (final Throwable e) {
+        } catch (Throwable e) {
+            log.error(e.getMessage(), e);
             return false;
         } finally {
             try {
@@ -119,7 +116,8 @@ public class PrintAttachmentListMethod extends AbstractMethod {
                 if (fileStream != null) {
                     fileStream.close();
                 }
-            } catch (final Throwable e) {
+            } catch (Throwable e) {
+                log.error(e.getMessage(), e);
                 return false;
             }
         }
@@ -133,24 +131,24 @@ public class PrintAttachmentListMethod extends AbstractMethod {
      *            файл для печати
      * @throws Exception
      */
-    protected void printFileViaDesktop(final File file) throws Exception {
+    protected void printFileViaDesktop(File file) throws Exception {
         try {
             Desktop.getDesktop().print(file);
-        } catch (final NullPointerException e) {
+        } catch (NullPointerException e) {
             throw new Exception("File is null", e);
-        } catch (final IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new Exception("Не найден файл " + file.getAbsolutePath(), e);
-        } catch (final UnsupportedOperationException e) {
+        } catch (UnsupportedOperationException e) {
             throw new Exception("Текущее окружение рабочего стола не поддерживает функцию печати", e);
-        } catch (final SecurityException e) {
+        } catch (SecurityException e) {
             throw new Exception("Доступ, либо возможность печати файла "
                     + file.getAbsolutePath()
                     + " заблокированы текущими настройками безопасности", e);
-        } catch (final IOException e) {
+        } catch (IOException e) {
             throw new Exception(
                     "Для печати файла " + file.getAbsolutePath() + " в системе не найдено ассоциированное приложение",
                     e);
-        } catch (final Throwable e) {
+        } catch (Throwable e) {
             throw new Exception("Не предусмотренное исключение при печати файла "
                     + file.getAbsolutePath()
                     + "<br/>"
@@ -166,42 +164,42 @@ public class PrintAttachmentListMethod extends AbstractMethod {
      * @return список полученных файлов
      * @throws Exception
      */
-    protected List<File> downloadAndUnzip(final String attachmentURL) throws Exception {
+    protected List<File> downloadAndUnzip(String attachmentURL){
         List<File> result = new ArrayList<>();
         InputStream urlStream = null;
         ZipInputStream zippedStream = null;
         try {
             URL url = new URL(getDocumentBase(), attachmentURL);
             urlStream = new BufferedInputStream(url.openStream());
-            HostApplication.log("GETTING STREAM FROM: " + url.toString());
+            log.info("GETTING STREAM FROM: " + url.toString());
             zippedStream = new ZipInputStream(urlStream);
             ZipEntry entry;
             while ((entry = zippedStream.getNextEntry()) != null) {
                 File file = createTempFileFromZippedStream(entry.getName(), zippedStream);
-                HostApplication.log("TEMP FILE CREATED: " + file.getAbsolutePath());
+                log.info("TEMP FILE CREATED: " + file.getAbsolutePath());
                 result.add(file);
                 zippedStream.closeEntry();
             }
-        } catch (final Throwable e) {
+        } catch (Throwable e) {
             String message = "Exception when downloading and uzipping files form " + attachmentURL;
-            HostApplication.error(message);
-            HostApplication.error(e);
-            throw new Exception(message, e);
+            log.error(message);
+            log.error(e.getMessage(), e);
+            throw new RuntimeException(message, e);
         } finally {
             try {
                 if (urlStream != null) {
                     urlStream.close();
-                    HostApplication.log("URL STREAM CLOSED");
+                    log.info("URL STREAM CLOSED");
                 }
                 if (zippedStream != null) {
                     zippedStream.close();
-                    HostApplication.log("ZIP STREAM CLOSED");
+                    log.info("ZIP STREAM CLOSED");
                 }
-            } catch (final Throwable e) {
+            } catch (Throwable e) {
                 String message = "Exception when closing streams form " + attachmentURL;
-                HostApplication.error(message);
-                HostApplication.error(e);
-                throw new Exception(message, e);
+                log.error(message);
+                log.error(e.getMessage(), e);
+                throw new RuntimeException(message, e);
             }
         }
         return result;
@@ -217,7 +215,7 @@ public class PrintAttachmentListMethod extends AbstractMethod {
      * @return временный файл
      * @throws Exception
      */
-    protected File createTempFileFromZippedStream(final String entryName, final ZipInputStream zippedStream)
+    protected File createTempFileFromZippedStream(String entryName, ZipInputStream zippedStream)
             throws Exception {
         String invalidCharRemoved = entryName.replaceAll("[\\\\/:*?\"<>|]", "-");
         File file = File.createTempFile("attachment-", invalidCharRemoved);
@@ -234,8 +232,8 @@ public class PrintAttachmentListMethod extends AbstractMethod {
      * @param dest
      * @throws Exception
      */
-    protected void copyStream(final InputStream source, final OutputStream dest) throws Exception {
-        final int initialCapacity = 1024;
+    protected void copyStream(InputStream source, OutputStream dest) throws Exception {
+        int initialCapacity = 1024;
         byte data[] = new byte[initialCapacity];
         int count;
         while ((count = source.read(data, 0, initialCapacity)) != -1) {
@@ -250,7 +248,7 @@ public class PrintAttachmentListMethod extends AbstractMethod {
      *            файл
      * @return
      */
-    protected boolean isPDF(final File file) {
+    protected boolean isPDF(File file) {
         String fileName = file.getAbsolutePath();
         String extension = "";
         int i = fileName.lastIndexOf('.');
@@ -270,6 +268,7 @@ public class PrintAttachmentListMethod extends AbstractMethod {
         try {
             url = new URL(getData());
         } catch (MalformedURLException e) {
+            log.error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
         return url;

@@ -37,7 +37,7 @@ function sendMessageToExtension(eventName, detail) {
 document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('version-button').addEventListener('click', function () {
     subscribeToExtensionEvent('extensionResponseVersion');
-    sendMessageToExtension('tnGetVersion', { method: 'getVersion', data: 'jre' });
+    sendMessageToExtension('tnGetVersion', { method: 'getVersion', data: 'hostApp' });
   });
 
   document.getElementById('jreinfo-button').addEventListener('click', function () {
@@ -69,6 +69,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById('shutdown-button').addEventListener('click', function () {
     subscribeToExtensionEvent('extensionResponseShutdown');
-    sendMessageToExtension('tnShutdown', { method: 'shutdown', data: 'jre' });
+    sendMessageToExtension('tnShutdown', { method: 'shutdown', data: 'hostApp' });
   });
 });
