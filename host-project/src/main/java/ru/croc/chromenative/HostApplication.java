@@ -51,6 +51,7 @@ public class HostApplication {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
+        log.info("Application start...");
         try {
             getInstance().run();
             System.exit(0);
