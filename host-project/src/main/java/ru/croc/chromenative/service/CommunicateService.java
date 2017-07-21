@@ -20,6 +20,12 @@ public class CommunicateService {
      */
     private static CommunicateService instance;
 
+    /**
+     * Максимальный размер сообщения, взят у EMC, но значению из документации(от Google) не соответствует. Возм. будет
+     * скорректирован.
+     */
+    private static final int MAX_MESSAGE_BYTES_COUNT = 100000;
+
     public static CommunicateService getInstance() {
         if (instance == null) {
             instance = new CommunicateService();
@@ -46,7 +52,7 @@ public class CommunicateService {
             if (size == 0) {
                 b = new byte[0];
                 throw new InterruptedIOException("Size incoming buffer is 0. Blocked communication");
-            }else if(size > 100000){
+            } else if (size > MAX_MESSAGE_BYTES_COUNT) {
                 b = new byte[0];
                 throw new InterruptedIOException("Size incoming buffer is very big. Blocked communication");
             }
@@ -56,7 +62,7 @@ public class CommunicateService {
 
         } catch (IOException e) {
             error(e.getMessage(), e);
-        } catch (Throwable e){
+        } catch (Throwable e) {
             error(e.getMessage(), e);
         }
         return toString(b);
@@ -64,7 +70,9 @@ public class CommunicateService {
 
     /**
      * Массив байт в строку.
-     * @param b массив байт
+     * 
+     * @param b
+     *            массив байт
      * @return
      */
     private String toString(byte[] b) {
@@ -125,6 +133,5 @@ public class CommunicateService {
     private void error(String msg, Throwable e) {
         LogService.getInstance().error(msg, e);
     }
-
 
 }

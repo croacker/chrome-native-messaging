@@ -1,8 +1,5 @@
 package ru.croc.chromenative.service;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  * Сервис записи в журнал. Временно не используется, в связи с проблемамаи в старых версияъ chrome, например в ver.37
  * вывод лога направляется в основной поток вывыода.
@@ -11,11 +8,6 @@ import org.apache.logging.log4j.Logger;
  * @since 20.07.2016 17:01
  */
 public class LogService {
-
-    /**
-     * Логгер
-     */
-//    private static Logger log = LogManager.getLogger(MapperService.class);
 
     /**
      * Статический экземпляр, замена DI
@@ -29,15 +21,31 @@ public class LogService {
         return instance;
     }
 
-    public void info(String msg){
-//        log.info(msg);
+    /**
+     * Вывод в лог информационного сообщения. В связи с проблемами в Chrome v37, в данный момент ничего, никуда не
+     * выводит.
+     * 
+     * @param msg
+     *            текст сообщения
+     */
+    public void info(String msg) {
     }
 
+    /**
+     * Вывод в лог сообщения об ошибке. В связи с проблемами в Chrome v37, в данный момент ничего, никуда не выводит.
+     * 
+     * @param msg
+     *            текст ошибки
+     */
     public void error(String msg) {
-//        log.error(msg);
     }
 
+    /**
+     * Вывод в лог сообщения об ошибке. В связи с проблемами в Chrome v37, в данный момент ничего, никуда не выводит.
+     * 
+     * @param msg
+     *            текст ошибки
+     */
     public void error(String msg, Throwable e) {
-//        log.error(msg, e);
     }
 }

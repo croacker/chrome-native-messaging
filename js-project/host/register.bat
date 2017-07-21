@@ -23,7 +23,7 @@ reg add HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts\com.croc.e
 echo . . .
 echo Make run app bat-file: %~dp0tn-host-app.bat
 echo @echo off > "%~dp0tn-host-app.bat"
-echo java -jar "%~dp0tn-host-app.jar" >> "%~dp0tn-host-app.bat"
+echo java -cp ./;./*;./lib/*;  ru.croc.chromenative.HostApplication >> "%~dp0tn-host-app.bat"
 
 echo . . .
 pause

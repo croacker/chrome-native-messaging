@@ -72,6 +72,16 @@ var ulResponse;
             extensionEventBus.dispatchEvent(extensionResponseSystemInfo);
         },
 
+        startScanPocessResponse: function (response) {
+            var extensionResponseStartScan = new CustomEvent('extensionResponseStartScan', {
+                detail: {
+                    method: 'extensionResponseStartScan',
+                    data: response.data
+                }
+            });
+            extensionEventBus.dispatchEvent(extensionResponseStartScan);
+        },
+
         /**
          * Вернуть в приложение результат выполнения печати вложений
          */
@@ -140,6 +150,7 @@ function subscribeToApplicationEvents(ksedEventBus) {
     extensionEventBus.addEventListener('tnGetSystemInfo', eventProcessor.onTnGetSystemInfo);
     extensionEventBus.addEventListener('tnPrintAttachments', eventProcessor.onTnPrintAttachments);
     extensionEventBus.addEventListener('tnPrintBarcode', eventProcessor.onTnPrintBarcode);
+    extensionEventBus.addEventListener('tnStartScan', eventProcessor.onTnStartScan);
 }
 
 /**
@@ -236,6 +247,11 @@ function EventProcessor(){
      * Приложение выполнило запрос системной информации, в частности версии jre
      */
     this.onTnGetSystemInfo = function (event) {
+        var request = me.getRequest(event.detail);
+        sendMessageToBackgroundJs(request);
+    };
+
+    this.onTnStartScan = function (event) {
         var request = me.getRequest(event.detail);
         sendMessageToBackgroundJs(request);
     };

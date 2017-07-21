@@ -4,11 +4,17 @@ import ru.croc.chromenative.dto.PrintResult;
 
 /**
  * Некоторый абстрактный метод хоста.
- * 
+ *
  * @author agumenyuk
  * @since 01.07.2016 17:01
  */
 public abstract class AbstractMethod implements IMethod {
+
+    /**
+     * Атрибут взаимодействия с расширением браузера - не закрывать листенер после завершения первой итерации
+     * взаимодействия
+     */
+    public final static String EXT_APP_ATTR_LEAVE_LISTENER_ACTIVE = "leaveListenerActive";
 
     /**
      * Данные полученные из Browser extension.
@@ -30,9 +36,8 @@ public abstract class AbstractMethod implements IMethod {
 
     /**
      * Получить результат-ошибка.
-     * 
-     * @param message
-     *            сообщение для передачи в результат
+     *
+     * @param message сообщение для передачи в результат
      * @return Объект-результат выполнения.
      */
     protected PrintResult getError(String message) {
@@ -41,9 +46,8 @@ public abstract class AbstractMethod implements IMethod {
 
     /**
      * Получить результат-успех.
-     * 
-     * @param message
-     *            сообщение для передачи в результат
+     *
+     * @param message сообщение для передачи в результат
      * @return Объект-результат выполнения.
      */
     protected PrintResult getSuccess(String message) {

@@ -141,7 +141,25 @@ function NativeRequest(config) {
     this.postMessage = function (json) {
         me.port.onMessage.addListener(function portOnMessageListener(response) {
             console.log('background.js: portOnMessageListener');
-            port.onMessage.removeListener(portOnMessageListener);
+            var leaveListenerActive=false;
+            if(response.data) {
+                //@todo Поправить - прилетает при первом вызове через Job строка, а при вызове
+                //через ru.croc.chromenative.job.Job.sendToExtension прилетает объект
+                if (typeof(response.data) == 'string') {
+                    try {
+                        var dataJSON = JSON.parse(response.data);
+                        leaveListenerActive = dataJSON.leaveListenerActive;
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }else if(typeof response.data=='object'){
+                    leaveListenerActive =  response.leaveListenerActive;
+                }
+            }
+
+            if(!leaveListenerActive) {
+                port.onMessage.removeListener(portOnMessageListener);
+            }
             if (!response.method) {
                 response.method = me.request.content.method;
             }
