@@ -1,23 +1,33 @@
 package ru.croc.chromenative.service.hostmethod;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import ru.croc.chromenative.HostApplication;
-import ru.croc.chromenative.dto.PrintResult;
-import ru.croc.chromenative.service.MapperService;
-import ru.croc.chromenative.util.StringUtils;
-
-import javax.print.*;
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
 import java.awt.*;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.SimpleDoc;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+
+import ru.croc.chromenative.dto.PrintResult;
+import ru.croc.chromenative.service.LogService;
+import ru.croc.chromenative.service.MapperService;
+import ru.croc.chromenative.util.StringUtils;
 
 /**
  * Метод печати вложений. Конверсия: <APPLET id="printApplet"
@@ -31,11 +41,6 @@ import java.util.zip.ZipInputStream;
 public class PrintAttachmentListMethod extends AbstractMethod {
 
     /**
-     * Логгер
-     */
-    private static Logger log = LogManager.getLogger(PrintAttachmentListMethod.class);
-
-    /**
      * Список временных файлов, полученных для печати от сервлета приложения КСЭД.
      */
     protected List<File> tempFileList;
@@ -46,7 +51,7 @@ public class PrintAttachmentListMethod extends AbstractMethod {
         try {
             result = print();
         } catch (Exception e) {
-            log.error(e);
+            error(e.getMessage(), e);
             result = getError(e.getMessage());
         }
         return MapperService.getInstance().toString(result);
@@ -63,13 +68,13 @@ public class PrintAttachmentListMethod extends AbstractMethod {
             String attachmentURL = getData();
             tempFileList = downloadAndUnzip(attachmentURL);
             for (File tempFile : tempFileList) {
-                log.info("PRINTING: " + tempFile.getAbsolutePath());
+                info("PRINTING: " + tempFile.getAbsolutePath());
                 printFile(tempFile);
-                log.info("FILE PRINTED: " + tempFile.getAbsolutePath());
+                info("FILE PRINTED: " + tempFile.getAbsolutePath());
             }
             result = getSuccess(StringUtils.EMPTY);
         } catch (Throwable e) {
-            log.error(e.getMessage(), e);
+            error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
         return result;
@@ -106,7 +111,7 @@ public class PrintAttachmentListMethod extends AbstractMethod {
             doc = new SimpleDoc(fileStream, flavor, null);
             printerJob.print(doc, aset);
         } catch (Throwable e) {
-            log.error(e.getMessage(), e);
+            error(e.getMessage(), e);
             return false;
         } finally {
             try {
@@ -117,7 +122,7 @@ public class PrintAttachmentListMethod extends AbstractMethod {
                     fileStream.close();
                 }
             } catch (Throwable e) {
-                log.error(e.getMessage(), e);
+                error(e.getMessage(), e);
                 return false;
             }
         }
@@ -171,39 +176,40 @@ public class PrintAttachmentListMethod extends AbstractMethod {
         try {
             URL url = new URL(getDocumentBase(), attachmentURL);
             urlStream = new BufferedInputStream(url.openStream());
-            log.info("GETTING STREAM FROM: " + url.toString());
+            info("GETTING STREAM FROM: " + url.toString());
             zippedStream = new ZipInputStream(urlStream);
             ZipEntry entry;
             while ((entry = zippedStream.getNextEntry()) != null) {
                 File file = createTempFileFromZippedStream(entry.getName(), zippedStream);
-                log.info("TEMP FILE CREATED: " + file.getAbsolutePath());
+                info("TEMP FILE CREATED: " + file.getAbsolutePath());
                 result.add(file);
                 zippedStream.closeEntry();
             }
         } catch (Throwable e) {
             String message = "Exception when downloading and uzipping files form " + attachmentURL;
-            log.error(message);
-            log.error(e.getMessage(), e);
+            error(message);
+            error(e.getMessage(), e);
             throw new RuntimeException(message, e);
         } finally {
             try {
                 if (urlStream != null) {
                     urlStream.close();
-                    log.info("URL STREAM CLOSED");
+                    info("URL STREAM CLOSED");
                 }
                 if (zippedStream != null) {
                     zippedStream.close();
-                    log.info("ZIP STREAM CLOSED");
+                    info("ZIP STREAM CLOSED");
                 }
             } catch (Throwable e) {
                 String message = "Exception when closing streams form " + attachmentURL;
-                log.error(message);
-                log.error(e.getMessage(), e);
+                error(message);
+                error(e.getMessage(), e);
                 throw new RuntimeException(message, e);
             }
         }
         return result;
     }
+
 
     /**
      * Создать временный файл.
@@ -268,9 +274,22 @@ public class PrintAttachmentListMethod extends AbstractMethod {
         try {
             url = new URL(getData());
         } catch (MalformedURLException e) {
-            log.error(e.getMessage(), e);
+            error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
         return url;
     }
+
+    private void info(String msg) {
+        LogService.getInstance().info(msg);
+    }
+
+    private void error(String msg) {
+        LogService.getInstance().error(msg);
+    }
+
+    private void error(String msg, Throwable e) {
+        LogService.getInstance().error(msg, e);
+    }
+
 }

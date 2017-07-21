@@ -9,6 +9,6 @@ rem ВАЖНО! ответы из приложения в браузер не б
 rem java -jar -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 tn-host-app.jar >> %LOG%
 
 rem Рабочий режим запуска.
-d:\java\jre1.8.0_121\bin\java -jar d:\projects\java\chrome-native-messaging\js-project\host\tn-host-app.jar
+java -jar tn-host-app.jar
 
-echo %errorlevel% >> %LOG%v
+echo %errorlevel% >> %LOG%

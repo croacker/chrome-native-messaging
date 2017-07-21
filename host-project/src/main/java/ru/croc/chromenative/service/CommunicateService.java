@@ -3,6 +3,9 @@ package ru.croc.chromenative.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
+import java.io.UnsupportedEncodingException;
+
+import ru.croc.chromenative.util.StringUtils;
 
 /**
  * Сервис обработки запросов и ответов Browser extension.
@@ -31,20 +34,47 @@ public class CommunicateService {
      * @return
      * @throws IOException
      */
-    public String readMessage(InputStream in) throws IOException {
-        byte[] b = new byte[4];
-        in.read(b); // Read the size of message
+    public String readMessage(InputStream in) {
+        byte[] b = {};
+        try {
+            b = new byte[4];
 
-        int size = getInt(b);
+            in.read(b); // Read the size of message
+            int size = getInt(b);
 
-        if (size == 0) {
-            throw new InterruptedIOException("Blocked communication");
+            info("Read bytes size: " + size);
+            if (size == 0) {
+                b = new byte[0];
+                throw new InterruptedIOException("Size incoming buffer is 0. Blocked communication");
+            }else if(size > 100000){
+                b = new byte[0];
+                throw new InterruptedIOException("Size incoming buffer is very big. Blocked communication");
+            }
+
+            b = new byte[size];
+            in.read(b);
+
+        } catch (IOException e) {
+            error(e.getMessage(), e);
+        } catch (Throwable e){
+            error(e.getMessage(), e);
         }
+        return toString(b);
+    }
 
-        b = new byte[size];
-        in.read(b);
-
-        return new String(b, "UTF-8");
+    /**
+     * Массив байт в строку.
+     * @param b массив байт
+     * @return
+     */
+    private String toString(byte[] b) {
+        String result = StringUtils.EMPTY;
+        try {
+            result = new String(b, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            error(e.getMessage(), e);
+        }
+        return result;
     }
 
     /**
@@ -87,5 +117,14 @@ public class CommunicateService {
         bytes[3] = (byte) ((length >> 24) & 0xFF);
         return bytes;
     }
+
+    private void info(String msg) {
+        LogService.getInstance().info(msg);
+    }
+
+    private void error(String msg, Throwable e) {
+        LogService.getInstance().error(msg, e);
+    }
+
 
 }

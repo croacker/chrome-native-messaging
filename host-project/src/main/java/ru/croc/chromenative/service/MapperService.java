@@ -1,12 +1,10 @@
 package ru.croc.chromenative.service;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
 import java.io.StringWriter;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Сервис трансляции json в объекты и обратно.
@@ -15,11 +13,6 @@ import java.io.StringWriter;
  * @since 01.07.2016 17:01
  */
 public class MapperService {
-
-    /**
-     * Логгер
-     */
-    private static Logger log = LogManager.getLogger(MapperService.class);
 
     /**
      * Статический экземпляр, замена DI
@@ -55,10 +48,39 @@ public class MapperService {
         try {
             getMapper().writeValue(stringWriter, obj);
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
         return stringWriter.toString();
+    }
+
+    /**
+     * json-строка в объект
+     * 
+     * @param json
+     *            json-строка
+     * @param clazz
+     *            класс
+     * @return
+     */
+    public <T> T readValue(String json, Class<T> clazz) {
+        T result = null;
+        ObjectMapper mapper = MapperService.getInstance().getMapper();
+        try {
+            result = mapper.readValue(json, clazz);
+        } catch (IOException e) {
+            error("Error json:{" + json + "} translation to " + clazz);
+            error(e.getMessage(), e);
+        }
+        return result;
+     }
+
+    private void error(String msg) {
+        LogService.getInstance().error(msg);
+    }
+
+    private void error(String msg, Throwable e) {
+        LogService.getInstance().error(msg, e);
     }
 
 }

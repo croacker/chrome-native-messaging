@@ -75,6 +75,9 @@ function connectToPort(listener) {
     port = chrome.runtime.connectNative(application);
     port.onDisconnect.addListener(function (e) {
         console.log('Java host application connection broken. Was called onDisconnect.');
+        if(chrome.extension.lastError){
+            console.log("Last error:" + chrome.extension.lastError.message);
+        }
         console.log(e);
         port = null;
     });

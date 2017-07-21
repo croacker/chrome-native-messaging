@@ -1,18 +1,12 @@
 package ru.croc.chromenative;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import ru.croc.chromenative.service.JobService;
+import ru.croc.chromenative.service.LogService;
 
 /**
  * 14.07.2017.
  */
 public class ApplicationManager {
-
-    /**
-     * Логгер
-     */
-    private static Logger log = LogManager.getLogger(ApplicationManager.class);
 
     /**
      * Задержка перед попыткой остановки приложения.
@@ -57,7 +51,7 @@ public class ApplicationManager {
             try {
                 Thread.currentThread().sleep(SHUTDOWN_DELAY);
             } catch (InterruptedException e) {
-                log.error(e.getMessage(), e);
+                LogService.getInstance().error(e.getMessage(), e);
                 throw new RuntimeException(e.getMessage(), e);
             }
         }

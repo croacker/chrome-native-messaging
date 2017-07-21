@@ -1,17 +1,17 @@
 package ru.croc.chromenative.job;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.concurrent.Callable;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+
 import ru.croc.chromenative.dto.NativeRequest;
 import ru.croc.chromenative.dto.NativeResponse;
 import ru.croc.chromenative.service.CommunicateService;
 import ru.croc.chromenative.service.HostMethodsService;
+import ru.croc.chromenative.service.LogService;
 import ru.croc.chromenative.service.MapperService;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.concurrent.Callable;
 
 /**
  * Задача на выполнение метода в отдельном потоке.
@@ -20,11 +20,6 @@ import java.util.concurrent.Callable;
  * @since 01.07.2016 17:01
  */
 public class Job implements Callable<String> {
-
-    /**
-     * Логгер
-     */
-    private static Logger log = LogManager.getLogger(Job.class);
 
     /**
      * Транслированный из json-запрос от Browser extension.
@@ -54,7 +49,7 @@ public class Job implements Callable<String> {
             NativeResponse response = execute(request);
             sendToExtension(response);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LogService.getInstance().error(e.getMessage(), e);
             jobResult = JobResult.EXCEPTION.getName();
         }
         return jobResult;

@@ -1,7 +1,5 @@
 package ru.croc.chromenative.service;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import ru.croc.chromenative.dto.NativeRequest;
 import ru.croc.chromenative.service.hostmethod.IMethod;
 import ru.croc.chromenative.service.hostmethod.Methods;
@@ -13,11 +11,6 @@ import ru.croc.chromenative.service.hostmethod.Methods;
  * @since 01.07.2016 17:01
  */
 public class BeanService {
-
-    /**
-     * Логгер
-     */
-    private static Logger log = LogManager.getLogger(BeanService.class);
 
     /**
      * Статический экземпляр, замена DI
@@ -51,7 +44,7 @@ public class BeanService {
         try {
             result = (IMethod) method.getAppletClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            log.error(e.getMessage(), e);
+            LogService.getInstance().error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
         return result;
