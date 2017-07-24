@@ -7,7 +7,7 @@
     <groupId>ru.croc.chromenative</groupId>
     <artifactId>tn-host-app</artifactId>
     <version>0.0.1</version>
-    <description>Hsot application for Transoil web-app extension</description>
+    <description>Host application for Transoil web-app extension</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -16,6 +16,7 @@
         <guava.version>20.0</guava.version>
         <jackson.version>2.7.3</jackson.version>
         <log4j.version>2.4.1</log4j.version>
+        <tn.applets.scanapplet.version>4.5.1-SNAPSHOT</tn.applets.scanapplet.version>
         <final.jar.name>tn-host-app</final.jar.name>
     </properties>
 
@@ -39,6 +40,16 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>ksed-extui-unknown</version>
+        </dependency>
+        <dependency>
+            <groupId>com.croc.documentum.tn</groupId>
+            <artifactId>tn-applets-scanapplet</artifactId>
+            <version>${tn.applets.scanapplet.version}</version>
         </dependency>
     </dependencies>
 

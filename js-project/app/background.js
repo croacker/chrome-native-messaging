@@ -3,19 +3,56 @@ var application = 'com.croc.external_app';
 
 var transoilTab;
 
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    if (needInject(tabId, changeInfo, tab)) {
-        transoilTab = new TransoilTab(tabId, changeInfo, tab);
-        console.log(transoilTab);
-        chrome.tabs.insertCSS(transoilTab.tabId, {
+/**
+ * Контроллер фоновой страницы
+ */
+var backgroundController = {
+    /**
+     * Ассоциативный список обслуживаемых закладок
+     */
+    tabs:{},
+    
+    /**
+     * Полчить закладку по идентификатору, в случае отсутствия создать
+     */
+    getTab: function(tabId, changeInfo, tab){
+        var me = backgroundController;
+        var tabController = me.getExistsTab(tabId);
+        if(!tabController){
+            tabController = me.newTab(tabId, changeInfo, tab);
+        }
+        return tabController;
+    },
+
+    /**
+     * Получить зарегистрированную закладку
+     */
+    getExistsTab: function(tabId){
+        var me = backgroundController;
+        return me.tabs[tabId];
+    },
+
+    /**
+     * Создать контроллер для закладки
+     */
+    newTab: function(tabId, changeInfo, tab){
+        var me = backgroundController;
+        var tabController = new TransoilTab(tabId, changeInfo, tab);
+        chrome.tabs.insertCSS(tabController.tabId, {
             file: "inject.css"
         });
-        chrome.tabs.executeScript(transoilTab.tabId, {
+        chrome.tabs.executeScript(tabController.tabId, {
             file: "inject.js"
-        },
-            function (results) {
-                console.log(results);
-            });
+        });
+        me.tabs[tabId] = tabController;
+        return tabController;
+    },
+}
+
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+    if (needInject(tabId, changeInfo, tab)) {
+        var tabController = backgroundController.newTab(tabId, changeInfo, tab);
+        console.log(tabController);
     }
 });
 
@@ -33,7 +70,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         console.log('background.js: Incoming message');
-        sendToNative(request, sendResponse);
+        sendToNative(request, sender, sendResponse);
     });
 
 /**
@@ -41,12 +78,13 @@ chrome.runtime.onMessage.addListener(
  * @param {*} request 
  * @param {*} sendResponse 
  */
-function sendToNative(request, sendResponse) {
+function sendToNative(request, sender, sendResponse) {
     var json = request.content;
+    var tabController = backgroundController.getExistsTab(sender.tab.id);
     var port = getPort();
     if (port) {
         var nativeRequest = new NativeRequest({
-            tabId: transoilTab.tabId,
+            tabId: tabController.tabId,
             port: port,
             request: request
         });
@@ -82,22 +120,6 @@ function connectToPort(listener) {
         port = null;
     });
     return port;
-}
-
-function getTabId(tabs) {
-    var tabId;
-    if (!tabs) {
-        console.log('tabs is undefined!');
-    } else if (!tabs[0]) {
-        console.log('tabs[0] is undefined!');
-    } else if (!tabs[0].id) {
-        console.log('tabs[0].id is undefined!');
-    } else {
-        tabId = tabs[0].id;
-    }
-    tabId = tabId || transoilTab.tabId;
-
-    return tabId;
 }
 
 //Только если в mainifest.json указана возможность отправлять запросы со страницы(externally_connectable - особенность безопасности).

@@ -175,13 +175,16 @@ function sendMessageIncludeId(request) {
 }
 
 /**
- * Обработка вызова от background.js
+ * Обработка вызова от background.js.
  */
-chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-        console.log(request);
-        transoilBrowserExtension.dispatchNativeResponse(request);
-    });
+if (!window.top.injectStatus) {
+    chrome.runtime.onMessage.addListener(
+        function (request, sender, sendResponse) {
+            console.log(request);
+            transoilBrowserExtension.dispatchNativeResponse(request);
+        });
+    window.top.injectStatus = 'injected';
+}
 
 /**
  * Отладочная функция, для добавления ответов в список <ul> с id == UL_NAME
