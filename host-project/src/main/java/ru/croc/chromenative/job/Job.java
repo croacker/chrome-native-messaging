@@ -49,7 +49,7 @@ public class Job implements Callable<String> {
             NativeResponse response = execute(request);
             sendToExtension(response);
         } catch (Exception e) {
-            LogService.getInstance().error(e.getMessage(), e);
+            LogService.getInstance().error(e);
             jobResult = JobResult.EXCEPTION.getName();
         }
         return jobResult;

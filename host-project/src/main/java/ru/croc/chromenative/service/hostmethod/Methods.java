@@ -25,10 +25,13 @@ public enum Methods {
      */
     PRINT_ATTACHMENT_LIST_METHOD("printAttachments", PrintAttachmentListMethod.class),
     /**
-     * Печать ШК
+     * Получение файла.
+     */
+    FILE_BASE64_METHOD("fileBase64", FileBase64Method.class),
+    /**
+     * Печать ШК.
      */
     PRINT_METHOD("printBarcode", PrintBarcodeMethod.class),
-
     /**
      * Сканирование
      */

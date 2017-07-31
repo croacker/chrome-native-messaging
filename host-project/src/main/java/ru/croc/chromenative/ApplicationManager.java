@@ -50,8 +50,8 @@ public class ApplicationManager {
         private void delay(){
             try {
                 Thread.currentThread().sleep(SHUTDOWN_DELAY);
-            } catch (InterruptedException e) {
-                LogService.getInstance().error(e.getMessage(), e);
+            } catch (final InterruptedException e) {
+                LogService.getInstance().error(e);
                 throw new RuntimeException(e.getMessage(), e);
             }
         }

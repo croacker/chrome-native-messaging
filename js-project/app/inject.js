@@ -109,6 +109,19 @@ var ulResponse;
         },
 
         /**
+         * Вернуть в приложение результат выполнения получения файла
+         */
+        fileBase64PocessResponse: function (response) {
+            var extensionResponseFileBase64 = new CustomEvent('extensionResponseFileBase64', {
+                detail: {
+                    method: 'extensionResponseFileBase64',
+                    data: response.data
+                }
+            });
+            extensionEventBus.dispatchEvent(extensionResponseFileBase64);
+        },
+
+        /**
          * Вызвать метод указанный в ответе от native-приложения
          */
         callResponseFunction: function (response) {
@@ -151,6 +164,7 @@ function subscribeToApplicationEvents(ksedEventBus) {
     extensionEventBus.addEventListener('tnPrintAttachments', eventProcessor.onTnPrintAttachments);
     extensionEventBus.addEventListener('tnPrintBarcode', eventProcessor.onTnPrintBarcode);
     extensionEventBus.addEventListener('tnStartScan', eventProcessor.onTnStartScan);
+    extensionEventBus.addEventListener('tnFileBase64', eventProcessor.onTnFileBase64);
 }
 
 /**
@@ -271,6 +285,14 @@ function EventProcessor(){
      * Приложение выполнило запрос на печать всех файлов
      */
     this.onTnPrintBarcode = function (event) {
+        var request = me.getRequest(event.detail);
+        sendMessageToBackgroundJs(request);
+    };
+
+    /**
+     * Приложение выполнило запрос на получаение файла
+     */
+    this.onTnFileBase64 = function (event) {
         var request = me.getRequest(event.detail);
         sendMessageToBackgroundJs(request);
     };

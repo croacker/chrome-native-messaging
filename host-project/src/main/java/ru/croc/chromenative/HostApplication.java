@@ -53,8 +53,8 @@ public class HostApplication {
             info("args:" + Arrays.toString(args));
             getInstance().run();
             System.exit(0);
-        } catch (Exception e) {
-            error(e.getMessage(), e);
+        } catch (final Exception e) {
+            error(e);
             info("Application shutdown...");
             JobService.getInstance().shutdownNow();
         }
@@ -80,6 +80,7 @@ public class HostApplication {
 
     /**
      * Вывод в лог информационного сообщения.
+     * 
      * @param msg
      */
     private static void info(String msg) {
@@ -91,8 +92,8 @@ public class HostApplication {
      * @param msg
      * @param e
      */
-    private static void error(String msg, Throwable e) {
-        LogService.getInstance().error(msg, e);
+    private static void error(final Throwable e) {
+        LogService.getInstance().error(e);
     }
 
 }

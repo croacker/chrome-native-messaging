@@ -48,7 +48,7 @@ public class ScanMethod extends AbstractMethod {
             data.accumulate(EXT_APP_EVENT_INITSCAN, true);
             message = ScanApp.prepareCallbackData(data, true);
         } catch (final JSONException e) {
-            error("Exception occurred: " + e.getMessage(), e);
+            error(e);
         }
         return message;
     }
@@ -80,22 +80,22 @@ public class ScanMethod extends AbstractMethod {
                         data.accumulate(EXT_APP_EVENT_SCANCANCEL, true);
                         ScanApp.callUploadCallback(data, false);
                     } catch (final JSONException e1) {
-                        error("Exception occurred: " + e1.getMessage(), e1);
+                        error(e1);
                     } catch (final IOException e1) {
-                        error("Exception occurred: " + e1.getMessage(), e1);
+                        error(e1);
                     }
 
                 }
             });
 
         } catch (final Throwable ex) {
-            error("Exception occurred: " + ex.getMessage(), ex);
+            error(ex);
         }
 
     }
 
-    private void error(String msg, Throwable e) {
-        LogService.getInstance().error(msg, e);
+    private void error(final Throwable e) {
+        LogService.getInstance().error(e);
     }
 
 }

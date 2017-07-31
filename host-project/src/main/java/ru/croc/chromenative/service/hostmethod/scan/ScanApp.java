@@ -63,10 +63,6 @@ public class ScanApp extends JPanel {
         return uploadUrl;
     }
 
-    public static void Log(final String message) {
-        LogService.getInstance().info(message);
-    }
-
     public static String getUserName() {
         return userName;
     }
@@ -126,9 +122,9 @@ public class ScanApp extends JPanel {
             }
 
         } catch (final JSONException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+            error(e);
+        } catch (final MalformedURLException e) {
+            error(e);
         }
         Imaging.configureNativeLogging(Imaging.LOG_LEVEL_DEBUG, Imaging.LOG_TO_STDERR);
         manager = new Imaging("myApp", 0);
@@ -138,7 +134,7 @@ public class ScanApp extends JPanel {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
         } catch (final Exception e) {
-            ScanApp.Log("Failed to set Look And Feel");
+            info("Failed to set Look And Feel");
         }
 
 
@@ -164,7 +160,7 @@ public class ScanApp extends JPanel {
                     app.setNoScanner(false);
                 } else {
                     if (systemScanLength == 0) {
-                        Log("No scanners in system");
+                        info("No scanners in system");
                         app.setNoScanner(true);
                     }
                 }
@@ -189,5 +185,23 @@ public class ScanApp extends JPanel {
                 return null;
             }
         });
+    }
+
+    /**
+     * Вывод в лог информационного сообщения.
+     *
+     * @param msg
+     */
+    private static void info(final String msg) {
+        LogService.getInstance().info(msg);
+    }
+
+    /**
+     * Вывод в лог сообщения об ошибке.
+     *
+     * @param e
+     */
+    private static void error(final Throwable e) {
+        LogService.getInstance().error(e);
     }
 }

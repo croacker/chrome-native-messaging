@@ -46,6 +46,6 @@ public class LogService {
      * @param msg
      *            текст ошибки
      */
-    public void error(String msg, Throwable e) {
+    public void error(final Throwable e) {
     }
 }

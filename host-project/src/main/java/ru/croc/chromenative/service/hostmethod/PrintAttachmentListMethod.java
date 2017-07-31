@@ -51,7 +51,7 @@ public class PrintAttachmentListMethod extends AbstractMethod {
         try {
             result = print();
         } catch (Exception e) {
-            error(e.getMessage(), e);
+            error(e);
             result = getError(e.getMessage());
         }
         return MapperService.getInstance().toString(result);
@@ -74,7 +74,7 @@ public class PrintAttachmentListMethod extends AbstractMethod {
             }
             result = getSuccess(StringUtils.EMPTY);
         } catch (Throwable e) {
-            error(e.getMessage(), e);
+            error(e);
             throw new RuntimeException(e.getMessage(), e);
         }
         return result;
@@ -110,8 +110,8 @@ public class PrintAttachmentListMethod extends AbstractMethod {
             fileStream = new FileInputStream(file);
             doc = new SimpleDoc(fileStream, flavor, null);
             printerJob.print(doc, aset);
-        } catch (Throwable e) {
-            error(e.getMessage(), e);
+        } catch (final Throwable e) {
+            error(e);
             return false;
         } finally {
             try {
@@ -121,8 +121,8 @@ public class PrintAttachmentListMethod extends AbstractMethod {
                 if (fileStream != null) {
                     fileStream.close();
                 }
-            } catch (Throwable e) {
-                error(e.getMessage(), e);
+            } catch (final Throwable e) {
+                error(e);
                 return false;
             }
         }
@@ -188,7 +188,7 @@ public class PrintAttachmentListMethod extends AbstractMethod {
         } catch (Throwable e) {
             String message = "Exception when downloading and uzipping files form " + attachmentURL;
             error(message);
-            error(e.getMessage(), e);
+            error(e);
             throw new RuntimeException(message, e);
         } finally {
             try {
@@ -203,7 +203,7 @@ public class PrintAttachmentListMethod extends AbstractMethod {
             } catch (Throwable e) {
                 String message = "Exception when closing streams form " + attachmentURL;
                 error(message);
-                error(e.getMessage(), e);
+                error(e);
                 throw new RuntimeException(message, e);
             }
         }
@@ -274,7 +274,7 @@ public class PrintAttachmentListMethod extends AbstractMethod {
         try {
             url = new URL(getData());
         } catch (MalformedURLException e) {
-            error(e.getMessage(), e);
+            error(e);
             throw new RuntimeException(e.getMessage(), e);
         }
         return url;
@@ -288,8 +288,8 @@ public class PrintAttachmentListMethod extends AbstractMethod {
         LogService.getInstance().error(msg);
     }
 
-    private void error(String msg, Throwable e) {
-        LogService.getInstance().error(msg, e);
+    private void error(Throwable e) {
+        LogService.getInstance().error(e);
     }
 
 }

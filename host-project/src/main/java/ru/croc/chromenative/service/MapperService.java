@@ -47,8 +47,8 @@ public class MapperService {
         StringWriter stringWriter = new StringWriter();
         try {
             getMapper().writeValue(stringWriter, obj);
-        } catch (IOException e) {
-            error(e.getMessage(), e);
+        } catch (final IOException e) {
+            error(e);
             throw new RuntimeException(e.getMessage(), e);
         }
         return stringWriter.toString();
@@ -70,7 +70,7 @@ public class MapperService {
             result = mapper.readValue(json, clazz);
         } catch (IOException e) {
             error("Error json:{" + json + "} translation to " + clazz);
-            error(e.getMessage(), e);
+            error(e);
         }
         return result;
      }
@@ -79,8 +79,8 @@ public class MapperService {
         LogService.getInstance().error(msg);
     }
 
-    private void error(String msg, Throwable e) {
-        LogService.getInstance().error(msg, e);
+    private void error(final Throwable e) {
+        LogService.getInstance().error(e);
     }
 
 }

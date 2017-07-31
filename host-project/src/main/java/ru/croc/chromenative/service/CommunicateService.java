@@ -60,10 +60,10 @@ public class CommunicateService {
             b = new byte[size];
             in.read(b);
 
-        } catch (IOException e) {
-            error(e.getMessage(), e);
-        } catch (Throwable e) {
-            error(e.getMessage(), e);
+        } catch (final IOException e) {
+            error(e);
+        } catch (final Throwable e) {
+            error(e);
         }
         return toString(b);
     }
@@ -79,8 +79,8 @@ public class CommunicateService {
         String result = StringUtils.EMPTY;
         try {
             result = new String(b, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            error(e.getMessage(), e);
+        } catch (final UnsupportedEncodingException e) {
+            error(e);
         }
         return result;
     }
@@ -130,8 +130,8 @@ public class CommunicateService {
         LogService.getInstance().info(msg);
     }
 
-    private void error(String msg, Throwable e) {
-        LogService.getInstance().error(msg, e);
+    private void error(final Throwable e) {
+        LogService.getInstance().error(e);
     }
 
 }

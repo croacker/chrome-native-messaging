@@ -44,7 +44,7 @@ public class BeanService {
         try {
             result = (IMethod) method.getAppletClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            LogService.getInstance().error(e.getMessage(), e);
+            LogService.getInstance().error(e);
             throw new RuntimeException(e.getMessage(), e);
         }
         return result;

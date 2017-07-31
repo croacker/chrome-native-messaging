@@ -9,6 +9,7 @@ import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
 import org.json.JSONObject;
+import ru.croc.chromenative.service.LogService;
 import ru.croc.chromenative.service.hostmethod.scan.App;
 import ru.croc.chromenative.service.hostmethod.scan.ScanApp;
 import ru.croc.chromenative.service.hostmethod.scan.dialogs.SelectScannerDialog;
@@ -31,7 +32,7 @@ public class SelectScannerAction extends AbstractAction implements Runnable {
         app.updateStatus("Выбор сканера...");
         try {
             String choice = SelectScannerDialog.ask(app.getSystemScanners(), parentWindow);
-            ScanApp.Log("Выбран " + choice);
+            info("Выбран " + choice);
             app.setScannerId(choice);
             JSONObject data = new JSONObject();
             data.accumulate("scansource", choice);
@@ -40,9 +41,27 @@ public class SelectScannerAction extends AbstractAction implements Runnable {
                 parentWindow.setAlwaysOnTop(true);
             }
         } catch (final Exception e) {
-            e.printStackTrace();
+            error(e);
         } finally {
             ScanApp.getApp().updateStatus("Операция завершена.");
         }
+    }
+
+    /**
+     * Вывод в лог информационного сообщения.
+     *
+     * @param msg
+     */
+    private static void info(final String msg) {
+        LogService.getInstance().info(msg);
+    }
+
+    /**
+     * Вывод в лог сообщения об ошибке.
+     *
+     * @param e
+     */
+    private static void error(final Throwable e) {
+        LogService.getInstance().error(e);
     }
 }

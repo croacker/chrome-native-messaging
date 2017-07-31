@@ -25,6 +25,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.border.LineBorder;
 
+import ru.croc.chromenative.service.LogService;
 import ru.croc.chromenative.service.hostmethod.scan.actions.AcquireAndUploadImageAction;
 import ru.croc.chromenative.service.hostmethod.scan.actions.AcquireImageAction;
 import ru.croc.chromenative.service.hostmethod.scan.actions.CropImageAction;
@@ -342,7 +343,7 @@ public class App implements RatioChangeListener {
     }
 
     public void updateStatus(final String statusText) {
-        ScanApp.Log(new Date() + " : " + statusText);
+        info(new Date() + " : " + statusText);
         tStatus.setText(statusText);
     }
 

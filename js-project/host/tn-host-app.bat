@@ -1,2 +1,2 @@
 @echo off 
-java -cp ./;./*;./lib/*;  ru.croc.chromenative.HostApplication
+java -jar tn-host-app.jar

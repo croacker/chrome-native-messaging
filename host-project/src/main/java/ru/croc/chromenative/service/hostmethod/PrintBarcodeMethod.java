@@ -79,8 +79,8 @@ public class PrintBarcodeMethod extends AbstractMethod {
         PrintResult result;
         try {
             result = print();
-        } catch (Exception e) {
-            error(e.getMessage(), e);
+        } catch (final Exception e) {
+            error(e);
             result = getError(e.getMessage());
         }
         return MapperService.getInstance().toString(result);
@@ -128,8 +128,8 @@ public class PrintBarcodeMethod extends AbstractMethod {
             doc = new SimpleDoc(getUrl(), javax.print.DocFlavor.URL.JPEG, null);
             try {
                 info("DOC : \n " + doc.getPrintData());
-            } catch (IOException e) {
-                error(e.getMessage(), e);
+            } catch (final IOException e) {
+                error(e);
             }
             printerJob = service.createPrintJob();
         }
@@ -214,8 +214,8 @@ public class PrintBarcodeMethod extends AbstractMethod {
         LogService.getInstance().info(msg);
     }
 
-    private void error(String msg, Exception e) {
-        LogService.getInstance().error(msg, e);
+    private void error(final Exception e) {
+        LogService.getInstance().error(e);
     }
 
 }
