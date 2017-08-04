@@ -1,2 +1,2 @@
 @echo off 
-java -jar tn-host-app.jar
+java -jar "D:\projects\java\chrome-native-messaging\js-project\host\tn-host-app.jar" 

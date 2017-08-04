@@ -21,6 +21,7 @@ import javax.print.attribute.standard.OrientationRequested;
 import ru.croc.chromenative.dto.PrintResult;
 import ru.croc.chromenative.service.LogService;
 import ru.croc.chromenative.service.MapperService;
+import ru.croc.chromenative.service.SystemPrintService;
 import ru.croc.chromenative.util.StringUtils;
 
 /**
@@ -60,19 +61,19 @@ public class PrintBarcodeMethod extends AbstractMethod {
     }
 
     /**
-     * Документ.
-     */
-    public Doc doc;
-
-    /**
-     * Задача для принтера.
-     */
-    private DocPrintJob printerJob;
-
-    /**
      * Параметры печати.
      */
     private HashPrintRequestAttributeSet printRequestAttributeSet;
+
+    private SystemPrintService getSystemPrintService(){
+        return SystemPrintService.getInstance();
+    }
+
+    public static void main(String[] args) {
+        PrintBarcodeMethod method = new PrintBarcodeMethod();
+        method.init("http://127.0.0.1:8082/dev/barcodegen?documentId=0900029a80064eb3");
+        method.getResult();
+    }
 
     @Override
     public String getResult() {
@@ -93,10 +94,11 @@ public class PrintBarcodeMethod extends AbstractMethod {
      */
     private PrintResult print() {
         PrintResult result;
-        prepare();
+        DocPrintJob printerJob = prepare();
+        Doc doc = getDocument();
         if (printerJob != null) {
             info("Printer Name : " + printerJob.getPrintService());
-            result = printDocument();
+            result = printDocument(doc, printerJob);
             info("Done Printing.");
         } else {
             result = getError("printCanceled");// Отменено пользователем, на этапе выбора принтера в диалоге
@@ -107,32 +109,40 @@ public class PrintBarcodeMethod extends AbstractMethod {
     /**
      * Печать документа.
      */
-    private PrintResult printDocument() {
+    private PrintResult printDocument(final Doc doc, final DocPrintJob printerJob) {
         PrintResult result;
         try {
             printerJob.print(doc, printRequestAttributeSet);
             result = getSuccess(StringUtils.EMPTY);
-        } catch (PrintException e) {
+        } catch (final PrintException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
         return result;
     }
 
     /**
-     * Подготовить окужение.
+     * Подготовить задание для принтера.
      */
-    void prepare() {
+    private DocPrintJob prepare() {
+        DocPrintJob  printerJob = null;
+
         initHashPrintRequestAttributeSet();
+
         PrintService service = selectPrintService();
         if (service != null) {
-            doc = new SimpleDoc(getUrl(), javax.print.DocFlavor.URL.JPEG, null);
-            try {
-                info("DOC : \n " + doc.getPrintData());
-            } catch (final IOException e) {
-                error(e);
-            }
             printerJob = service.createPrintJob();
         }
+        return printerJob;
+    }
+
+    /**
+     * Получить объект документа для печати.
+     * @return
+     */
+    private Doc getDocument() {
+        Doc doc = new SimpleDoc(getUrl(), javax.print.DocFlavor.URL.JPEG, null);
+        info(doc);
+        return doc;
     }
 
     /**
@@ -158,7 +168,7 @@ public class PrintBarcodeMethod extends AbstractMethod {
      * @return принтер
      */
     private PrintService selectPrintService() {
-        PrintService defaultService = PrintServiceLookup.lookupDefaultPrintService();
+        PrintService defaultService = getSystemPrintService().getDefault();
         return showPrintDialog(defaultService);
     }
 
@@ -168,9 +178,9 @@ public class PrintBarcodeMethod extends AbstractMethod {
      * @return
      */
     private PrintService[] getAllPrintServices() {
-        PrintRequestAttributeSet attr_set = new HashPrintRequestAttributeSet();
-        attr_set.add(new Copies(1));
-        return PrintServiceLookup.lookupPrintServices(DocFlavor.INPUT_STREAM.JPEG, attr_set);
+        PrintRequestAttributeSet attributeSet = new HashPrintRequestAttributeSet();
+        attributeSet.add(new Copies(1));
+        return PrintServiceLookup.lookupPrintServices(DocFlavor.INPUT_STREAM.JPEG, attributeSet);
     }
 
     /**
@@ -180,7 +190,7 @@ public class PrintBarcodeMethod extends AbstractMethod {
      *            принтер поумолчанию
      * @return
      */
-    private PrintService showPrintDialog(PrintService defaultService) {
+    private PrintService showPrintDialog(final PrintService defaultService) {
         PrintService service = defaultService;
         PrintService[] services = getAllPrintServices();
         if (services != null && services.length > 1) {
@@ -204,13 +214,21 @@ public class PrintBarcodeMethod extends AbstractMethod {
         URL url;
         try {
             url = new URL(getData());
-        } catch (MalformedURLException e) {
+        } catch (final MalformedURLException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
         return url;
     }
+    
+    private void info(final Doc doc) {
+        try {
+            info("DOC : \n " + doc.getPrintData());
+        } catch (final IOException e) {
+            error(e);
+        }
+    }
 
-    private void info(String msg) {
+    private void info(final String msg) {
         LogService.getInstance().info(msg);
     }
 
