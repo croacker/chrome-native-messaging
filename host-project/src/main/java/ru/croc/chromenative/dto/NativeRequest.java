@@ -22,7 +22,7 @@ public class NativeRequest {
         return method;
     }
 
-    public void setMethod(String method) {
+    public void setMethod(final String method) {
         this.method = method;
     }
 
@@ -30,7 +30,7 @@ public class NativeRequest {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(final String data) {
         this.data = data;
     }
 

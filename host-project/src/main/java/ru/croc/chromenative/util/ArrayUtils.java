@@ -5,7 +5,7 @@ package ru.croc.chromenative.util;
  */
 public class ArrayUtils {
 
-    public static byte[] reverse(byte[] array) {
+    public static byte[] reverse(final byte[] array) {
         int i = 0;
         int j = array.length - 1;
         byte tmp;

@@ -32,7 +32,7 @@ public class Job implements Callable<String> {
      * @param request
      *            транслированный из json-запрос от Browser extension.
      */
-    public Job(NativeRequest request) {
+    public Job(final NativeRequest request) {
         this.request = request;
     }
 
@@ -48,7 +48,7 @@ public class Job implements Callable<String> {
         try {
             NativeResponse response = execute(request);
             sendToExtension(response);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LogService.getInstance().error(e);
             jobResult = JobResult.EXCEPTION.getName();
         }
@@ -62,7 +62,7 @@ public class Job implements Callable<String> {
      *            запрос от Browser extension
      * @return Future-объект для асинхронного отслеживания результатов выполнения.
      */
-    private NativeResponse execute(NativeRequest request) {
+    private NativeResponse execute(final NativeRequest request) {
         NativeResponse response = new NativeResponse();
         String executeResult = HostMethodsService.getInstance().execute(request);
         response.setStatus(JobResult.OK.getName());
@@ -77,7 +77,7 @@ public class Job implements Callable<String> {
      *            результат выполнения запроса.
      * @throws IOException
      */
-    private void sendToExtension(NativeResponse response) throws IOException {
+    private void sendToExtension(final NativeResponse response) throws IOException {
         ObjectMapper mapper = MapperService.getInstance().getMapper();
         StringWriter stringWriter = new StringWriter();
         mapper.writeValue(stringWriter, response);

@@ -47,7 +47,7 @@ public class HostApplication {
      *            аргументы запуска приложения.
      * @throws Exception
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         try {
             info("Application start...");
             info("args:" + Arrays.toString(args));
@@ -72,7 +72,7 @@ public class HostApplication {
             if (!Strings.isNullOrEmpty(requestJson)) {
                 NativeRequest request = MapperService.getInstance().readValue(requestJson, NativeRequest.class);
                 if (request != null) {
-            JobService.getInstance().submit(request);
+                    JobService.getInstance().submit(request);
                 }
             }
         }
@@ -83,13 +83,13 @@ public class HostApplication {
      * 
      * @param msg
      */
-    private static void info(String msg) {
+    private static void info(final String msg) {
         LogService.getInstance().info(msg);
     }
 
     /**
      * Вывод в лог сообщения об ошибке.
-     * @param msg
+     * 
      * @param e
      */
     private static void error(final Throwable e) {

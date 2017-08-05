@@ -25,12 +25,12 @@ public abstract class AbstractMethod implements IMethod {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(final String data) {
         this.data = data;
     }
 
     @Override
-    public void init(String data) {
+    public void init(final String data) {
         this.data = data;
     }
 
@@ -40,7 +40,7 @@ public abstract class AbstractMethod implements IMethod {
      * @param message сообщение для передачи в результат
      * @return Объект-результат выполнения.
      */
-    protected PrintResult getError(String message) {
+    protected PrintResult getError(final String message) {
         return new PrintResult(ResultStatus.ERROR.getName(), message);
     }
 
@@ -50,7 +50,7 @@ public abstract class AbstractMethod implements IMethod {
      * @param message сообщение для передачи в результат
      * @return Объект-результат выполнения.
      */
-    protected PrintResult getSuccess(String message) {
+    protected PrintResult getSuccess(final String message) {
         return new PrintResult(ResultStatus.SUCCESS.getName(), message);
     }
 }

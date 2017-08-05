@@ -43,7 +43,7 @@ public class MapperService {
      * @param obj
      * @return
      */
-    public String toString(Object obj) {
+    public String toString(final Object obj) {
         StringWriter stringWriter = new StringWriter();
         try {
             getMapper().writeValue(stringWriter, obj);
@@ -63,19 +63,19 @@ public class MapperService {
      *            класс
      * @return
      */
-    public <T> T readValue(String json, Class<T> clazz) {
+    public <T> T readValue(final String json, final Class<T> clazz) {
         T result = null;
         ObjectMapper mapper = MapperService.getInstance().getMapper();
         try {
             result = mapper.readValue(json, clazz);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             error("Error json:{" + json + "} translation to " + clazz);
             error(e);
         }
         return result;
      }
 
-    private void error(String msg) {
+    private void error(final String msg) {
         LogService.getInstance().error(msg);
     }
 

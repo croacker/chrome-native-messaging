@@ -29,7 +29,7 @@ public enum ResultStatus {
         return name;
     }
 
-    ResultStatus(String name) {
+    ResultStatus(final String name) {
         this.name = name;
     }
 }

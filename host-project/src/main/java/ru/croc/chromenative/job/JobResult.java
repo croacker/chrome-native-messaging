@@ -25,7 +25,7 @@ public enum JobResult {
         return name;
     }
 
-    JobResult(String name) {
+    JobResult(final String name) {
         this.name = name;
     }
 }

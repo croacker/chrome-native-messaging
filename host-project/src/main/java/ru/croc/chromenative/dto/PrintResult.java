@@ -22,7 +22,7 @@ public class PrintResult {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         this.status = status;
     }
 
@@ -30,14 +30,14 @@ public class PrintResult {
         return message;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(final String message) {
         this.message = message;
     }
 
     public PrintResult() {
     }
 
-    public PrintResult(String status, String message) {
+    public PrintResult(final String status, final String message) {
         this.status = status;
         this.message = message;
     }

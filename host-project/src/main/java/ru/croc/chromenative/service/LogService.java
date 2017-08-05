@@ -28,7 +28,7 @@ public class LogService {
      * @param msg
      *            текст сообщения
      */
-    public void info(String msg) {
+    public void info(final String msg) {
     }
 
     /**
@@ -37,14 +37,11 @@ public class LogService {
      * @param msg
      *            текст ошибки
      */
-    public void error(String msg) {
+    public void error(final String msg) {
     }
 
     /**
      * Вывод в лог сообщения об ошибке. В связи с проблемами в Chrome v37, в данный момент ничего, никуда не выводит.
-     * 
-     * @param msg
-     *            текст ошибки
      */
     public void error(final Throwable e) {
     }

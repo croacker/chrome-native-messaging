@@ -22,7 +22,7 @@ public class NativeResponse {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         this.status = status;
     }
 
@@ -30,7 +30,7 @@ public class NativeResponse {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(final String data) {
         this.data = data;
     }
 

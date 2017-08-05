@@ -52,7 +52,7 @@ public enum Methods {
         return appletClass;
     }
 
-    Methods(String key, Class appletClass) {
+    Methods(final String key, final Class appletClass) {
         this.appletClass = appletClass;
         this.key = key;
     }
@@ -64,7 +64,7 @@ public enum Methods {
      *            Ключ(наименование метода)
      * @return элемент перечисления
      */
-    public static Methods get(String key) {
+    public static Methods get(final String key) {
         Methods result = null;
         for (Methods method : values()) {
             if (method.key.equals(key)) {

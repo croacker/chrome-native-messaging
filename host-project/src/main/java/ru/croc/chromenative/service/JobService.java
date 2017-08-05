@@ -51,7 +51,7 @@ public class JobService {
      * @param request
      *            запрос от Browser extension
      */
-    public Future<String> submit(NativeRequest request) {
+    public Future<String> submit(final NativeRequest request) {
         return executorService.submit(new Job(request));
     }
 

@@ -11,7 +11,7 @@ public class ShutdownApplication implements IMethod {
     private String data;
 
     @Override
-    public void init(String data) {
+    public void init(final String data) {
         this.data = data;
     }
 

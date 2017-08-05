@@ -32,7 +32,7 @@ public class SystemPrintService {
      * Получить принтер пумолчанию.
      * @return
      */
-    public PrintService getDefault(){
+    public PrintService getDefault() {
         return PrintServiceLookup.lookupDefaultPrintService();
     }
 
@@ -42,7 +42,7 @@ public class SystemPrintService {
      * @param attributeSet
      * @return
      */
-    public PrintService select(final PrintService defaultService, final HashPrintRequestAttributeSet attributeSet) {
+    public PrintService showDialog(final PrintService defaultService, final PrintRequestAttributeSet attributeSet) {
         PrintService service = defaultService;
         PrintService[] services = getAllPrintServices();
         if (services != null && services.length > 1) {

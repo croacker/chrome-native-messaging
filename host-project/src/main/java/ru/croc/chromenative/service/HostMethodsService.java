@@ -26,7 +26,7 @@ public class HostMethodsService {
      * @param request запрос от Browser extension
      * @return
      */
-    public String execute(NativeRequest request) {
+    public String execute(final NativeRequest request) {
         IMethod method = BeanService.getInstance().getMethod(request);
         method.init(request.getData());
         return method.getResult();

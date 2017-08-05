@@ -29,7 +29,7 @@ public class BeanService {
      * @param request Запрос от Browser extension
      * @return
      */
-    public IMethod getMethod(NativeRequest request) {
+    public IMethod getMethod(final NativeRequest request) {
         Methods method = Methods.get(request.getMethod());
         return newInstance(method);
     }
@@ -39,7 +39,7 @@ public class BeanService {
      * @param method полученный из перечисления-стратегии элемент метода.
      * @return
      */
-    private IMethod newInstance(Methods method) {
+    private IMethod newInstance(final Methods method) {
         IMethod result;
         try {
             result = (IMethod) method.getAppletClass().newInstance();

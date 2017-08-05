@@ -40,7 +40,7 @@ public class CommunicateService {
      * @return
      * @throws IOException
      */
-    public String readMessage(InputStream in) {
+    public String readMessage(final InputStream in) {
         byte[] b = {};
         try {
             b = new byte[4];
@@ -75,7 +75,7 @@ public class CommunicateService {
      *            массив байт
      * @return
      */
-    private String toString(byte[] b) {
+    private String toString(final byte[] b) {
         String result = StringUtils.EMPTY;
         try {
             result = new String(b, "UTF-8");
@@ -92,7 +92,7 @@ public class CommunicateService {
      *            предварительно подготовленное сообщение в формате json
      * @throws IOException
      */
-    public void sendMessage(String message) throws IOException {
+    public void sendMessage(final String message) throws IOException {
         System.out.write(getBytes(message.length()));
         System.out.write(message.getBytes("UTF-8"));
         System.out.flush();
@@ -104,7 +104,7 @@ public class CommunicateService {
      * @param bytes
      * @return
      */
-    public int getInt(byte[] bytes) {
+    public int getInt(final byte[] bytes) {
         return (bytes[3] << 24) & 0xff000000
                 | (bytes[2] << 16) & 0x00ff0000
                 | (bytes[1] << 8) & 0x0000ff00
@@ -117,7 +117,7 @@ public class CommunicateService {
      * @param length
      * @return
      */
-    public byte[] getBytes(int length) {
+    public byte[] getBytes(final int length) {
         byte[] bytes = new byte[4];
         bytes[0] = (byte) (length & 0xFF);
         bytes[1] = (byte) ((length >> 8) & 0xFF);
@@ -126,7 +126,7 @@ public class CommunicateService {
         return bytes;
     }
 
-    private void info(String msg) {
+    private void info(final String msg) {
         LogService.getInstance().info(msg);
     }
 

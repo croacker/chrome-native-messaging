@@ -1,13 +1,11 @@
 package ru.croc.chromenative.service.hostmethod;
 
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
+import javax.swing.*;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -92,7 +90,7 @@ public class ScanMethod extends AbstractMethod {
             error(ex);
         }
 
-    }
+        }
 
     private void error(final Throwable e) {
         LogService.getInstance().error(e);

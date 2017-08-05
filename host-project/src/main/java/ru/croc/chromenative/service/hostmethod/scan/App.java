@@ -546,4 +546,22 @@ public class App implements RatioChangeListener {
 
         public static ZoomImageAction zoomResetImageAction = new ZoomImageAction(ZoomImageAction.DIRECTION.ASIS);
     }
+
+    /**
+     * Вывод в лог информационного сообщения.
+     *
+     * @param msg
+     */
+    private static void info(final String msg) {
+        LogService.getInstance().info(msg);
+    }
+
+    /**
+     * Вывод в лог сообщения об ошибке.
+     *
+     * @param e
+     */
+    private static void error(final Throwable e) {
+        LogService.getInstance().error(e);
+    }
 }

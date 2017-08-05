@@ -92,7 +92,7 @@ public class ScanApp extends JPanel {
         complete.accumulate(ScanMethod.EXT_APP_ATTR_LEAVE_LISTENER_ACTIVE, leaveListenerActive);
         complete.accumulate(ScanMethod.EXT_APP_ATTR_DATA, data);
         String message = complete.toString();
-        LogService.getInstance().info(message);
+        info(message);
         return message;
     }
 
