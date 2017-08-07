@@ -31,12 +31,7 @@ public enum Methods {
     /**
      * Печать ШК.
      */
-    PRINT_METHOD("printBarcode", PrintBarcodeMethod.class),
-    /**
-     * Сканирование
-     */
-    SCAN_METHOD("startScan", ScanMethod.class);
-
+    PRINT_METHOD("printBarcode", PrintBarcodeMethod.class);
 
     /**
      * Ключ - наименование метода.

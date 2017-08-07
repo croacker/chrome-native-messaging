@@ -1,37 +1,24 @@
 package ru.croc.chromenative.service.hostmethod;
 
-import java.awt.*;
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import javax.print.Doc;
-import javax.print.DocFlavor;
-import javax.print.DocPrintJob;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
-import javax.print.SimpleDoc;
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
-
 import com.google.common.io.Files;
-import com.google.gson.internal.Streams;
 import ru.croc.chromenative.dto.PrintResult;
 import ru.croc.chromenative.service.FileService;
 import ru.croc.chromenative.service.LogService;
 import ru.croc.chromenative.service.MapperService;
 import ru.croc.chromenative.service.StreamService;
 import ru.croc.chromenative.util.StringUtils;
+
+import javax.print.*;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import java.awt.*;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Метод печати вложений. Конверсия: <APPLET id="printApplet"

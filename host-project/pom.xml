@@ -41,16 +41,6 @@
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>ksed-extui-unknown</version>
-        </dependency>
-        <dependency>
-            <groupId>com.croc.documentum.tn</groupId>
-            <artifactId>tn-applets-scanapplet</artifactId>
-            <version>${tn.applets.scanapplet.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
